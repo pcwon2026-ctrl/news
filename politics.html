@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>한국정치경제신문 · 정치</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nanum+Myeongjo:wght@400;700;800&family=Noto+Serif+KR:wght@300;400;500;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="paper">
+
+  <div class="top-strip">
+    <span data-issue>제 47호</span>
+    <span>창간 2026년 1월 1일</span>
+    <span data-today>2026년 5월 13일 (수요일)</span>
+  </div>
+
+  <header class="masthead">
+    <h1>한국정치경제신문</h1>
+    <p class="tagline">정확한 사실 · 깊은 시각</p>
+  </header>
+
+  <nav class="nav">
+    <a href="index.html">1 면</a>
+    <a href="politics.html">정 치</a>
+    <a href="economy.html">경 제</a>
+    <a href="#" class="disabled">사 회</a>
+    <a href="#" class="disabled">국 제</a>
+  </nav>
+
+  <div class="page-header">
+    <h1>정 치</h1>
+    <p class="sub">국회 · 외교 · 정당 · 행정</p>
+  </div>
+
+  <!-- ===== 정치면 톱기사 ===== -->
+  <section class="lead">
+    <p class="flag" data-lead-flag></p>
+    <h2 data-lead-headline></h2>
+    <p class="deck" data-lead-deck></p>
+    <p class="byline" data-lead-byline></p>
+    <div class="lead-body" data-lead-body></div>
+  </section>
+
+  <!-- ===== 광고 (상단) ===== -->
+  <div class="ad ad--full">
+    <span class="ad-label">광 고</span>
+    <p class="ad-placeholder">정치면 상단 광고</p>
+    <p class="ad-sub">권장 크기 · 가로 1180 px / 높이 160 px 내외</p>
+  </div>
+
+  <!-- ===== 정치 기사 2단 ===== -->
+  <div class="articles-grid">
+    <div class="col" data-section="0"></div>
+    <div class="col" data-section="1"></div>
+  </div>
+
+  <!-- ===== 광고 (하단 띠) ===== -->
+  <div class="ad ad--banner">
+    <span class="ad-label">광 고</span>
+    <p class="ad-placeholder">정치면 하단 띠 광고</p>
+    <p class="ad-sub">권장 크기 · 1180 × 90 px</p>
+  </div>
+
+  <!-- ===== 정치 칼럼 ===== -->
+  <section class="opinion">
+    <p class="label" data-opinion-label></p>
+    <h2 data-opinion-headline></h2>
+    <div data-opinion-body></div>
+    <p class="author" data-opinion-author></p>
+  </section>
+
+  <footer>
+    <span>한국정치경제신문 · 발행인 박창원</span>
+    <span>© 2026 본지 무단 전재·재배포 금지</span>
+  </footer>
+
+</div>
+
+<script src="data.js"></script>
+<script src="script.js"></script>
+</body>
+</html>

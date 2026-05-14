@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>한국정치경제신문</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nanum+Myeongjo:wght@400;700;800&family=Noto+Serif+KR:wght@300;400;500;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="paper">
+
+  <div class="top-strip">
+    <span data-issue>제 47호</span>
+    <span>창간 2026년 1월 1일</span>
+    <span data-today>2026년 5월 13일 (수요일)</span>
+  </div>
+
+  <header class="masthead">
+    <h1>한국정치경제신문</h1>
+    <p class="tagline">정확한 사실 · 깊은 시각</p>
+  </header>
+
+  <nav class="nav">
+    <a href="index.html">1 면</a>
+    <a href="politics.html">정 치</a>
+    <a href="economy.html">경 제</a>
+    <a href="#" class="disabled">사 회</a>
+    <a href="#" class="disabled">국 제</a>
+  </nav>
+
+  <!-- ===== 1면 톱기사 ===== -->
+  <section class="lead">
+    <p class="flag" data-lead-flag></p>
+    <h2 data-lead-headline></h2>
+    <p class="deck" data-lead-deck></p>
+    <p class="byline" data-lead-byline></p>
+    <div class="lead-body" data-lead-body></div>
+  </section>
+
+  <!-- ===== 광고 (1면 하단 5단) ===== -->
+  <div class="ad ad--full">
+    <span class="ad-label">광 고</span>
+    <p class="ad-placeholder">여기에 1면 하단 광고를 넣으세요</p>
+    <p class="ad-sub">권장 크기 · 가로 1180 px / 높이 160 px 내외</p>
+  </div>
+
+  <div class="main-grid">
+
+    <!-- 정치 컬럼 -->
+    <section class="col col--politics">
+      <div class="section-rule">
+        <span class="label">정 치</span>
+        <span class="line"></span>
+      </div>
+      <div data-politics-articles></div>
+    </section>
+
+    <!-- 경제·증시 컬럼 -->
+    <section class="col col--economy">
+      <div class="section-rule">
+        <span class="label">경 제 · 증 시</span>
+        <span class="line"></span>
+      </div>
+
+      <div class="market-box">
+        <div class="mb-title">마 감 시 세</div>
+        <table><tbody data-market-small></tbody></table>
+      </div>
+
+      <!-- ===== 광고 (사이드 띠) ===== -->
+      <div class="ad ad--strip">
+        <span class="ad-label">광 고</span>
+        <p class="ad-placeholder">사이드 띠 광고</p>
+        <p class="ad-sub">권장 · 380 × 70 px</p>
+      </div>
+
+      <div data-economy-articles></div>
+
+      <!-- ===== 광고 (사이드 박스) ===== -->
+      <div class="ad ad--box">
+        <span class="ad-label">광 고</span>
+        <p class="ad-placeholder">박스 광고</p>
+        <p class="ad-sub">권장 · 380 × 220 px</p>
+      </div>
+
+      <div class="section-rule small">
+        <span class="label">오늘의 시초가 후보</span>
+        <span class="line"></span>
+      </div>
+
+      <div class="tier-list" data-tier-list></div>
+
+      <!-- ===== 광고 (사이드 하단 띠) ===== -->
+      <div class="ad ad--strip">
+        <span class="ad-label">광 고</span>
+        <p class="ad-placeholder">사이드 하단 띠</p>
+        <p class="ad-sub">권장 · 380 × 70 px</p>
+      </div>
+    </section>
+
+  </div>
+
+  <!-- ===== 광고 (하단 띠) ===== -->
+  <div class="ad ad--banner">
+    <span class="ad-label">광 고</span>
+    <p class="ad-placeholder">하단 띠 광고</p>
+    <p class="ad-sub">권장 크기 · 1180 × 90 px</p>
+  </div>
+
+  <!-- ===== 사설 ===== -->
+  <section class="opinion">
+    <p class="label" data-opinion-label></p>
+    <h2 data-opinion-headline></h2>
+    <div data-opinion-body></div>
+    <p class="author" data-opinion-author></p>
+  </section>
+
+  <footer>
+    <span>한국정치경제신문 · 발행인 박창원</span>
+    <span>© 2026 본지 무단 전재·재배포 금지</span>
+  </footer>
+
+</div>
+
+<!-- data.js 가 먼저 로드되어야 합니다 -->
+<script src="data.js"></script>
+<script src="script.js"></script>
+</body>
+</html>
