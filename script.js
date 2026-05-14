@@ -59,6 +59,18 @@
     setText('[data-lead-deck]', d.deck);
     setText('[data-lead-byline]', d.byline);
     if (d.body) setHTML('[data-lead-body]', d.body.map(p => `<p>${p}</p>`).join(''));
+
+    // 사진 처리
+    const photoBox = document.querySelector('[data-lead-photo]');
+    const photoImg = document.querySelector('[data-lead-photo-img]');
+    const photoCap = document.querySelector('[data-lead-photo-caption]');
+    if (photoBox && d.photo) {
+      photoBox.style.display = 'block';
+      if (photoImg) photoImg.src = d.photo;
+      if (photoCap) photoCap.textContent = d.photoCaption || '';
+    } else if (photoBox) {
+      photoBox.style.display = 'none';
+    }
   }
 
   // --- 일반 기사 1개 ---

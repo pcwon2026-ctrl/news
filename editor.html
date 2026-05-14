@@ -240,6 +240,18 @@
     <div class="hint">문단마다 빈 줄 하나로 구분 (Enter 두 번)</div>
   </div>
 
+  <!-- 톱기사 사진 -->
+  <div class="field">
+    <label>톱기사 사진 (파일명)</label>
+    <input id="lead-photo" type="text" placeholder="예: today-photo.jpg (비워두면 사진 없음)">
+    <div class="hint">신문 폴더의 <code>images/</code> 폴더에 사진을 넣고, 파일명만 여기 입력하세요</div>
+  </div>
+
+  <div class="field">
+    <label>사진 캡션 (설명)</label>
+    <input id="lead-photo-caption" type="text" placeholder="예: 13일 본회의에서 추경안이 통과되고 있다. (연합뉴스)">
+  </div>
+
   <!-- 정치 기사 -->
   <h2>
     1 면  ·  정 치 기 사
@@ -330,6 +342,8 @@
     document.getElementById('lead-deck').value = lead.deck || '';
     document.getElementById('lead-byline').value = lead.byline || '';
     document.getElementById('lead-body').value = (lead.body || []).join('\n\n');
+    document.getElementById('lead-photo').value = lead.photo || '';
+    document.getElementById('lead-photo-caption').value = lead.photoCaption || '';
 
     // 정치 기사
     document.getElementById('politics-list').innerHTML = '';
@@ -446,15 +460,26 @@
   }
 
   function readForm() {
+    // 사진 파일명 처리: 비어있으면 안 넣고, 입력되어 있으면 images/ 경로 자동 추가
+    const photoFile = document.getElementById('lead-photo').value.trim();
+    const photoPath = photoFile ? `images/${photoFile}` : '';
+    const photoCap = document.getElementById('lead-photo-caption').value.trim();
+
+    const lead = {
+      flag: document.getElementById('lead-flag').value,
+      headline: document.getElementById('lead-headline').value,
+      deck: document.getElementById('lead-deck').value,
+      byline: document.getElementById('lead-byline').value,
+      body: splitParagraphs(document.getElementById('lead-body').value)
+    };
+    if (photoPath) {
+      lead.photo = photoPath;
+      lead.photoCaption = photoCap;
+    }
+
     return {
       home: {
-        lead: {
-          flag: document.getElementById('lead-flag').value,
-          headline: document.getElementById('lead-headline').value,
-          deck: document.getElementById('lead-deck').value,
-          byline: document.getElementById('lead-byline').value,
-          body: splitParagraphs(document.getElementById('lead-body').value)
-        },
+        lead: lead,
         politicsArticles: readArticles('politics'),
         economyArticles: readArticles('economy'),
         opinion: {
