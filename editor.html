@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>편집실 · 한국정치경제신문</title>
+<link href="https://fonts.googleapis.com/css2?family=Nanum+Myeongjo:wght@400;700;800&family=Noto+Serif+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #FBF8F1;
+    --ink: #161616;
+    --ink-soft: #3A3A3A;
+    --mute: #6E6E6E;
+    --line: #C8C5BD;
+    --line-soft: #E8E5DC;
+    --accent: #8B1A1A;
+    --green: #2a7a2a;
+    --serif-display: 'Nanum Myeongjo', serif;
+    --serif: 'Noto Serif KR', serif;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--serif);
+    font-size: 14px;
+    line-height: 1.5;
+  }
+
+  /* 헤더 */
+  .top {
+    background: #fff;
+    border-bottom: 0.5px solid var(--line);
+    padding: 14px 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+  .top h1 {
+    font-family: var(--serif-display);
+    font-size: 22px;
+    margin: 0;
+    letter-spacing: -0.5px;
+  }
+  .top .meta {
+    font-size: 12px;
+    color: var(--mute);
+    font-style: italic;
+  }
+  .top .actions { display: flex; gap: 10px; align-items: center; }
+  .btn {
+    font-family: var(--serif);
+    font-size: 13px;
+    padding: 8px 16px;
+    border: 1px solid var(--ink);
+    background: #fff;
+    color: var(--ink);
+    cursor: pointer;
+    border-radius: 4px;
+    letter-spacing: 0.5px;
+  }
+  .btn:hover { opacity: 0.85; }
+  .btn.primary { background: var(--ink); color: #fff; }
+  .btn.danger { border-color: var(--accent); color: var(--accent); }
+  .btn.danger:hover { background: var(--accent); color: #fff; }
+  .btn.small { padding: 4px 10px; font-size: 12px; }
+
+  .status {
+    text-align: center;
+    font-size: 13px;
+    padding: 10px;
+    background: #f5f1e8;
+    color: var(--mute);
+  }
+  .status.loaded { background: #e6f4e6; color: var(--green); }
+  .status.error { background: #fdf2f2; color: var(--accent); }
+
+  /* 본문 그리드 */
+  .main {
+    display: grid;
+    grid-template-columns: 380px 1fr;
+    min-height: calc(100vh - 60px);
+  }
+
+  /* 왼쪽 - 기사 목록 */
+  .sidebar {
+    background: #fff;
+    border-right: 0.5px solid var(--line);
+    padding: 20px;
+    overflow-y: auto;
+    max-height: calc(100vh - 60px);
+    position: sticky;
+    top: 60px;
+  }
+  .sidebar-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 14px;
+    padding-bottom: 10px;
+    border-bottom: 0.5px solid var(--line);
+  }
+  .sidebar-head h2 {
+    font-family: var(--serif-display);
+    font-size: 14px;
+    letter-spacing: 3px;
+    margin: 0;
+  }
+  .article-list { display: flex; flex-direction: column; gap: 8px; }
+  .article-item {
+    border: 1px solid var(--line-soft);
+    border-radius: 5px;
+    padding: 10px 12px;
+    cursor: pointer;
+    background: #fafaf7;
+    transition: all 0.15s;
+  }
+  .article-item:hover { border-color: var(--ink); }
+  .article-item.active {
+    border-color: var(--accent);
+    background: #fdf6f6;
+  }
+  .article-item .item-meta {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 5px;
+    font-size: 10px;
+    align-items: center;
+  }
+  .article-item .badge {
+    background: var(--ink);
+    color: #fff;
+    padding: 1px 6px;
+    border-radius: 2px;
+    font-family: var(--serif-display);
+    letter-spacing: 1px;
+  }
+  .article-item .badge.lead { background: var(--accent); }
+  .article-item .item-date { color: var(--mute); font-style: italic; }
+  .article-item .item-title {
+    font-family: var(--serif-display);
+    font-size: 13px;
+    font-weight: 700;
+    line-height: 1.35;
+    margin: 0;
+  }
+
+  /* 오른쪽 - 편집 폼 */
+  .editor {
+    padding: 28px 36px 50px;
+    max-width: 800px;
+  }
+  .editor h2 {
+    font-family: var(--serif-display);
+    font-size: 22px;
+    margin: 0 0 18px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--ink);
+    letter-spacing: -0.5px;
+  }
+  .row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .field { margin-bottom: 14px; }
+  label {
+    display: block;
+    font-size: 11px;
+    color: var(--mute);
+    letter-spacing: 1px;
+    margin-bottom: 4px;
+    text-transform: uppercase;
+  }
+  input, textarea, select {
+    width: 100%;
+    border: 1px solid var(--line);
+    background: #fff;
+    padding: 9px 12px;
+    font-family: var(--serif);
+    font-size: 14px;
+    color: var(--ink);
+    border-radius: 4px;
+  }
+  textarea { resize: vertical; line-height: 1.65; min-height: 80px; }
+  .hint { font-size: 11px; color: var(--mute); margin-top: 3px; font-style: italic; }
+
+  .check-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 12px;
+    background: #fdf6f6;
+    border: 1px solid var(--line-soft);
+    border-radius: 4px;
+    margin-bottom: 14px;
+  }
+  .check-row input[type="checkbox"] { width: auto; }
+  .check-row label {
+    margin: 0;
+    text-transform: none;
+    font-size: 13px;
+    color: var(--ink);
+    letter-spacing: 0;
+  }
+
+  .editor-actions {
+    margin-top: 20px;
+    padding-top: 16px;
+    border-top: 0.5px solid var(--line);
+    display: flex;
+    gap: 10px;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .editor-actions .left { display: flex; gap: 8px; }
+  .editor-actions .right { display: flex; gap: 8px; }
+
+  .empty-editor {
+    padding: 60px 20px;
+    text-align: center;
+    color: var(--mute);
+    font-style: italic;
+  }
+
+  .opinion-section {
+    margin-top: 36px;
+    padding-top: 22px;
+    border-top: 2px solid var(--ink);
+  }
+
+  .guide {
+    margin-top: 28px;
+    padding: 14px 18px;
+    background: #f5f1e8;
+    border-left: 3px solid var(--accent);
+    font-size: 12px;
+    color: var(--mute);
+    line-height: 1.7;
+  }
+  .guide b { color: var(--ink); }
+  .guide code {
+    background: #fff;
+    padding: 1px 6px;
+    border-radius: 3px;
+    font-size: 11px;
+  }
+
+  @media (max-width: 800px) {
+    .main { grid-template-columns: 1fr; }
+    .sidebar { position: static; max-height: none; }
+    .row { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="top">
+  <div>
+    <h1>편집실</h1>
+    <p class="meta" id="meta">articles.json 을 불러오세요</p>
+  </div>
+  <div class="actions">
+    <label class="btn" for="file-input">📂 articles.json 불러오기</label>
+    <input id="file-input" type="file" accept=".json" style="display:none" onchange="handleFile(event)">
+    <button class="btn primary" onclick="saveAll()" id="save-btn" disabled>💾 전체 저장</button>
+  </div>
+</div>
+
+<p class="status" id="status">먼저 articles.json 파일을 선택해주세요.</p>
+
+<div class="main">
+
+  <!-- 왼쪽: 기사 목록 -->
+  <aside class="sidebar">
+    <div class="sidebar-head">
+      <h2>기 사  목 록</h2>
+      <button class="btn small primary" onclick="newArticle()">+ 새 기사</button>
+    </div>
+    <div class="article-list" id="article-list"></div>
+  </aside>
+
+  <!-- 오른쪽: 편집 폼 -->
+  <main class="editor" id="editor">
+    <div class="empty-editor">
+      ← 왼쪽에서 기사를 선택하거나<br>"+ 새 기사" 버튼을 눌러주세요
+    </div>
+  </main>
+
+</div>
+
+<script>
+  // ---------- 상태 ----------
+  let DATA = null;       // articles.json 전체
+  let CURRENT_ID = null; // 현재 편집 중인 기사 id
+  let DIRTY = false;     // 변경 사항 있나
+
+  // ---------- 부서 옵션 ----------
+  const DEPTS = ['정치', '경제', '사회', '국제', '시황'];
+
+  // ---------- 헬퍼 ----------
+  const $ = s => document.querySelector(s);
+  const setStatus = (txt, cls = 'loaded') => {
+    const s = $('#status');
+    s.textContent = txt;
+    s.className = 'status ' + cls;
+  };
+
+  const splitParas = (t) => t.split(/\n\s*\n/).map(s => s.trim()).filter(Boolean);
+
+  // 새 기사 ID 자동 생성 (a + YYYYMMDD + 일련번호 3자리)
+  function newId() {
+    const today = new Date();
+    const yyyy = today.getFullYear();
+    const mm = String(today.getMonth() + 1).padStart(2, '0');
+    const dd = String(today.getDate()).padStart(2, '0');
+    const prefix = `a${yyyy}${mm}${dd}`;
+    const sameDay = DATA.articles.filter(a => a.id.startsWith(prefix));
+    const next = String(sameDay.length + 1).padStart(3, '0');
+    return prefix + next;
+  }
+
+  function todayStr() {
+    const t = new Date();
+    return `${t.getFullYear()}-${String(t.getMonth()+1).padStart(2,'0')}-${String(t.getDate()).padStart(2,'0')}`;
+  }
+
+  // ---------- 파일 불러오기 ----------
+  function handleFile(ev) {
+    const file = ev.target.files[0];
+    if (!file) return;
+    const r = new FileReader();
+    r.onload = (e) => {
+      try {
+        DATA = JSON.parse(e.target.result);
+        if (!DATA.articles) DATA.articles = [];
+        if (!DATA.reporters) DATA.reporters = [];
+        if (!DATA.opinion) DATA.opinion = {};
+        DIRTY = false;
+        CURRENT_ID = null;
+        renderList();
+        renderEmpty();
+        $('#save-btn').disabled = false;
+        setStatus(`[OK] ${file.name} 불러오기 완료`);
+        updateMeta();
+      } catch (err) {
+        setStatus('[X] JSON 형식 오류: ' + err.message, 'error');
+      }
+    };
+    r.readAsText(file, 'UTF-8');
+  }
+
+  function updateMeta() {
+    $('#meta').textContent = `기사 ${DATA.articles.length}개 · 기자 ${DATA.reporters.length}명${DIRTY ? ' · 변경됨' : ''}`;
+  }
+
+  // ---------- 기사 목록 렌더 ----------
+  function renderList() {
+    const sorted = [...DATA.articles].sort((a,b) =>
+      b.date.localeCompare(a.date) || b.id.localeCompare(a.id)
+    );
+    $('#article-list').innerHTML = sorted.map(a => `
+      <div class="article-item ${a.id === CURRENT_ID ? 'active' : ''}" onclick="editArticle('${a.id}')">
+        <div class="item-meta">
+          ${a.isLead ? '<span class="badge lead">톱</span>' : ''}
+          <span class="badge">${a.dept || ''}</span>
+          <span class="item-date">${(a.date || '').replace(/-/g,'.')}</span>
+        </div>
+        <p class="item-title">${a.headline || '(제목 없음)'}</p>
+      </div>
+    `).join('') || '<p style="color:var(--mute);font-style:italic;text-align:center;padding:20px">기사가 없습니다</p>';
+  }
+
+  // ---------- 빈 편집창 ----------
+  function renderEmpty() {
+    $('#editor').innerHTML = `
+      <div class="empty-editor">
+        왼쪽에서 기사를 선택하거나<br>"+ 새 기사" 버튼을 눌러주세요
+        ${DATA && DATA.opinion ? renderOpinionForm() : ''}
+      </div>
+    `;
+  }
+
+  // ---------- 새 기사 ----------
+  function newArticle() {
+    if (!DATA) { alert('먼저 articles.json을 불러오세요'); return; }
+    const id = newId();
+    const newOne = {
+      id: id,
+      date: todayStr(),
+      dept: DEPTS[0],
+      reporterId: (DATA.reporters[0] || {}).id || '',
+      headline: '',
+      deck: '',
+      summary: '',
+      body: '',
+      photo: '',
+      photoCaption: '',
+      isLead: false
+    };
+    DATA.articles.push(newOne);
+    CURRENT_ID = id;
+    DIRTY = true;
+    renderList();
+    editArticle(id);
+    updateMeta();
+  }
+
+  // ---------- 기사 편집 폼 ----------
+  function editArticle(id) {
+    CURRENT_ID = id;
+    const a = DATA.articles.find(x => x.id === id);
+    if (!a) return;
+
+    const reporterOptions = DATA.reporters.map(r =>
+      `<option value="${r.id}" ${r.id === a.reporterId ? 'selected' : ''}>${r.name} (${r.dept})</option>`
+    ).join('');
+
+    const deptOptions = DEPTS.map(d =>
+      `<option value="${d}" ${d === a.dept ? 'selected' : ''}>${d}</option>`
+    ).join('');
+
+    $('#editor').innerHTML = `
+      <h2>기사 편집</h2>
+      <p style="font-size:11px;color:var(--mute);margin:-12px 0 16px;font-family:monospace">ID: ${a.id}</p>
+
+      <div class="check-row">
+        <input type="checkbox" id="f-isLead" ${a.isLead ? 'checked' : ''}>
+        <label for="f-isLead">⭐ 톱기사로 지정 (1면 메인)</label>
+      </div>
+
+      <div class="row">
+        <div class="field">
+          <label>날짜</label>
+          <input type="date" id="f-date" value="${a.date || ''}">
+        </div>
+        <div class="field">
+          <label>부서</label>
+          <select id="f-dept">${deptOptions}</select>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>기자</label>
+        <select id="f-reporter">${reporterOptions}</select>
+      </div>
+
+      <div class="field">
+        <label>헤드라인</label>
+        <input type="text" id="f-headline" value="${escapeAttr(a.headline)}">
+      </div>
+
+      <div class="field">
+        <label>부제 (Deck)</label>
+        <input type="text" id="f-deck" value="${escapeAttr(a.deck || '')}">
+      </div>
+
+      <div class="field">
+        <label>요약 (1면 카드에 표시)</label>
+        <textarea id="f-summary" rows="2">${escapeText(a.summary || '')}</textarea>
+        <p class="hint">1~2문장. 톱기사면 톱기사 카드에, 일반 기사면 카드 미리보기에 표시됨</p>
+      </div>
+
+      <div class="field">
+        <label>전문 (기사 상세 페이지의 본문)</label>
+        <textarea id="f-body" rows="10">${escapeText(a.body || '')}</textarea>
+        <p class="hint">문단마다 빈 줄 하나로 구분 (Enter 두 번)</p>
+      </div>
+
+      <div class="row">
+        <div class="field">
+          <label>사진 파일명</label>
+          <input type="text" id="f-photo" value="${escapeAttr(a.photo || '')}" placeholder="예: images/survey.jpg">
+          <p class="hint">images/ 폴더 안 파일. 비워두면 사진 없음</p>
+        </div>
+        <div class="field">
+          <label>사진 캡션</label>
+          <input type="text" id="f-photoCaption" value="${escapeAttr(a.photoCaption || '')}">
+        </div>
+      </div>
+
+      <div class="editor-actions">
+        <div class="left">
+          <button class="btn danger" onclick="deleteArticle('${a.id}')">🗑 삭제</button>
+        </div>
+        <div class="right">
+          <button class="btn" onclick="cancelEdit()">취소</button>
+          <button class="btn primary" onclick="applyEdit()">✓ 적용</button>
+        </div>
+      </div>
+
+      ${renderOpinionForm()}
+    `;
+    renderList();
+  }
+
+  // ---------- 사설 폼 ----------
+  function renderOpinionForm() {
+    const o = DATA.opinion || {};
+    return `
+      <section class="opinion-section">
+        <h2>사 설</h2>
+        <div class="field">
+          <label>라벨</label>
+          <input type="text" id="o-label" value="${escapeAttr(o.label || '사 설')}">
+        </div>
+        <div class="field">
+          <label>제목</label>
+          <input type="text" id="o-headline" value="${escapeAttr(o.headline || '')}">
+        </div>
+        <div class="field">
+          <label>본문</label>
+          <textarea id="o-body" rows="4">${escapeText((o.body || []).join('\n\n'))}</textarea>
+        </div>
+        <div class="field">
+          <label>작성자</label>
+          <input type="text" id="o-author" value="${escapeAttr(o.author || '')}">
+        </div>
+        <div style="text-align:right;margin-top:10px">
+          <button class="btn primary" onclick="applyOpinion()">✓ 사설 적용</button>
+        </div>
+      </section>
+    `;
+  }
+
+  // 텍스트/속성 이스케이프
+  function escapeAttr(s) {
+    return String(s || '').replace(/"/g, '&quot;').replace(/</g, '&lt;');
+  }
+  function escapeText(s) {
+    return String(s || '').replace(/</g, '&lt;');
+  }
+
+  // ---------- 적용 ----------
+  function applyEdit() {
+    const a = DATA.articles.find(x => x.id === CURRENT_ID);
+    if (!a) return;
+    a.isLead = $('#f-isLead').checked;
+    a.date = $('#f-date').value;
+    a.dept = $('#f-dept').value;
+    a.reporterId = $('#f-reporter').value;
+    a.headline = $('#f-headline').value;
+    a.deck = $('#f-deck').value;
+    a.summary = $('#f-summary').value;
+    a.body = $('#f-body').value;
+    a.photo = $('#f-photo').value;
+    a.photoCaption = $('#f-photoCaption').value;
+
+    // 톱기사 단일성 — 이 기사를 톱으로 만들면 같은 날짜 다른 톱은 해제
+    if (a.isLead) {
+      DATA.articles.forEach(x => {
+        if (x.id !== a.id && x.date === a.date && x.isLead) x.isLead = false;
+      });
+    }
+
+    DIRTY = true;
+    renderList();
+    updateMeta();
+    setStatus('[OK] 기사 적용됨. "전체 저장"을 눌러야 파일로 다운로드됩니다.');
+  }
+
+  function applyOpinion() {
+    DATA.opinion = {
+      label: $('#o-label').value,
+      headline: $('#o-headline').value,
+      body: splitParas($('#o-body').value),
+      author: $('#o-author').value
+    };
+    DIRTY = true;
+    updateMeta();
+    setStatus('[OK] 사설 적용됨. "전체 저장"을 눌러야 파일로 다운로드됩니다.');
+  }
+
+  function cancelEdit() {
+    CURRENT_ID = null;
+    renderEmpty();
+    renderList();
+  }
+
+  function deleteArticle(id) {
+    if (!confirm('이 기사를 삭제하시겠어요? (전체 저장 전에는 복구 가능)')) return;
+    DATA.articles = DATA.articles.filter(x => x.id !== id);
+    if (CURRENT_ID === id) CURRENT_ID = null;
+    DIRTY = true;
+    renderList();
+    renderEmpty();
+    updateMeta();
+    setStatus('[OK] 기사 삭제됨.');
+  }
+
+  // ---------- 전체 저장 (다운로드) ----------
+  function saveAll() {
+    if (!DATA) return;
+    const json = JSON.stringify(DATA, null, 2);
+    const blob = new Blob([json], {type: 'application/json'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'articles.json';
+    a.click();
+    URL.revokeObjectURL(url);
+    DIRTY = false;
+    updateMeta();
+    setStatus('[OK] articles.json 다운로드 완료. 신문 폴더로 옮긴 후 generate_data.py 를 실행하세요.');
+  }
+</script>
+
+</body>
+</html>
