@@ -15,7 +15,7 @@
   <div class="top-strip">
     <span data-issue>제 47호</span>
     <span>창간 2026년 1월 1일</span>
-    <span data-today>2026년 5월 13일 (수요일)</span>
+    <span data-today>2026년 5월 14일 (목요일)</span>
   </div>
 
   <header class="masthead">
@@ -25,86 +25,50 @@
 
   <nav class="nav">
     <a href="index.html">1 면</a>
-    <a href="politics.html">정 치</a>
-    <a href="economy.html">경 제</a>
-    <a href="#" class="disabled">사 회</a>
-    <a href="#" class="disabled">국 제</a>
+    <a href="archive.html">아 카 이 브</a>
   </nav>
 
   <!-- ===== 1면 톱기사 ===== -->
   <section class="lead">
-    <p class="flag" data-lead-flag></p>
+    <p class="flag" data-lead-dept></p>
     <h2 data-lead-headline></h2>
     <p class="deck" data-lead-deck></p>
     <p class="byline" data-lead-byline></p>
     <div class="lead-photo" data-lead-photo style="display:none">
-      <img data-lead-photo-img>
-      <p class="caption" data-lead-photo-caption></p>
+      <img>
+      <p class="caption"></p>
     </div>
-    <div class="lead-body" data-lead-body></div>
+    <p style="font-size:14px;line-height:1.7;text-align:justify" data-lead-summary></p>
+    <p style="text-align:right;margin-top:8px">
+      <a data-lead-link href="#" style="font-size:13px;color:var(--accent);text-decoration:none;letter-spacing:1px">
+        전문 읽기 →
+      </a>
+    </p>
   </section>
 
   <!-- ===== 광고 (1면 하단 5단) ===== -->
   <div class="ad ad--full">
     <span class="ad-label">광 고</span>
-    <p class="ad-placeholder">여기에 1면 하단 광고를 넣으세요</p>
+    <p class="ad-placeholder">1면 하단 광고</p>
     <p class="ad-sub">권장 크기 · 가로 1180 px / 높이 160 px 내외</p>
   </div>
 
-  <div class="main-grid">
+  <!-- ===== 오늘의 기사 ===== -->
+  <div class="section-rule">
+    <span class="label">오 늘 의  기 사</span>
+    <span class="line"></span>
+  </div>
 
-    <!-- 정치 컬럼 -->
-    <section class="col col--politics">
-      <div class="section-rule">
-        <span class="label">정 치</span>
-        <span class="line"></span>
-      </div>
-      <div data-politics-articles></div>
-    </section>
+  <div class="article-cards" data-article-cards></div>
 
-    <!-- 경제·증시 컬럼 -->
-    <section class="col col--economy">
-      <div class="section-rule">
-        <span class="label">경 제 · 증 시</span>
-        <span class="line"></span>
-      </div>
+  <!-- ===== 시세 박스 ===== -->
+  <div class="section-rule">
+    <span class="label">마 감 시 세</span>
+    <span class="line"></span>
+  </div>
 
-      <div class="market-box">
-        <div class="mb-title">마 감 시 세</div>
-        <table><tbody data-market-small></tbody></table>
-      </div>
-
-      <!-- ===== 광고 (사이드 띠) ===== -->
-      <div class="ad ad--strip">
-        <span class="ad-label">광 고</span>
-        <p class="ad-placeholder">사이드 띠 광고</p>
-        <p class="ad-sub">권장 · 380 × 70 px</p>
-      </div>
-
-      <div data-economy-articles></div>
-
-      <!-- ===== 광고 (사이드 박스) ===== -->
-      <div class="ad ad--box">
-        <span class="ad-label">광 고</span>
-        <p class="ad-placeholder">박스 광고</p>
-        <p class="ad-sub">권장 · 380 × 220 px</p>
-      </div>
-
-      <div class="section-rule small">
-        <span class="label">오늘의 시초가 후보</span>
-        <span class="line"></span>
-      </div>
-
-      <div class="tier-list" data-tier-list></div>
-
-      <!-- ===== 광고 (사이드 하단 띠) ===== -->
-      <div class="ad ad--strip">
-        <span class="ad-label">광 고</span>
-        <p class="ad-placeholder">사이드 하단 띠</p>
-        <p class="ad-sub">권장 · 380 × 70 px</p>
-      </div>
-    </section>
-
+  <div class="market-box">
+    <table><tbody data-market-small></tbody></table>
   </div>
 
   <!-- ===== 광고 (하단 띠) ===== -->
@@ -129,7 +93,6 @@
 
 </div>
 
-<!-- data.js 가 먼저 로드되어야 합니다 -->
 <script src="data.js"></script>
 <script src="script.js"></script>
 </body>
