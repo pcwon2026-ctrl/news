@@ -19,277 +19,55 @@
     --serif: 'Noto Serif KR', serif;
   }
   * { box-sizing: border-box; }
-  body {
-    margin: 0;
-    background: var(--bg);
-    color: var(--ink);
-    font-family: var(--serif);
-    font-size: 14px;
-    line-height: 1.5;
-  }
-
-  /* 헤더 */
-  .top {
-    background: #fff;
-    border-bottom: 0.5px solid var(--line);
-    padding: 14px 30px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    position: sticky;
-    top: 0;
-    z-index: 10;
-  }
-  .top h1 {
-    font-family: var(--serif-display);
-    font-size: 22px;
-    margin: 0;
-    letter-spacing: -0.5px;
-  }
-  .top .meta {
-    font-size: 12px;
-    color: var(--mute);
-    font-style: italic;
-  }
+  body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--serif); font-size: 14px; line-height: 1.5; }
+  .top { background: #fff; border-bottom: 0.5px solid var(--line); padding: 14px 30px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 10; }
+  .top h1 { font-family: var(--serif-display); font-size: 22px; margin: 0; letter-spacing: -0.5px; }
+  .top .meta { font-size: 12px; color: var(--mute); font-style: italic; }
   .top .actions { display: flex; gap: 10px; align-items: center; }
-  .btn {
-    font-family: var(--serif);
-    font-size: 13px;
-    padding: 8px 16px;
-    border: 1px solid var(--ink);
-    background: #fff;
-    color: var(--ink);
-    cursor: pointer;
-    border-radius: 4px;
-    letter-spacing: 0.5px;
-  }
+  .btn { font-family: var(--serif); font-size: 13px; padding: 8px 16px; border: 1px solid var(--ink); background: #fff; color: var(--ink); cursor: pointer; border-radius: 4px; letter-spacing: 0.5px; }
   .btn:hover { opacity: 0.85; }
   .btn.primary { background: var(--ink); color: #fff; }
   .btn.danger { border-color: var(--accent); color: var(--accent); }
   .btn.danger:hover { background: var(--accent); color: #fff; }
   .btn.small { padding: 4px 10px; font-size: 12px; }
-
-  .status {
-    text-align: center;
-    font-size: 13px;
-    padding: 10px;
-    background: #f5f1e8;
-    color: var(--mute);
-  }
+  .status { text-align: center; font-size: 13px; padding: 10px; background: #f5f1e8; color: var(--mute); }
   .status.loaded { background: #e6f4e6; color: var(--green); }
   .status.error { background: #fdf2f2; color: var(--accent); }
-
-  /* 본문 그리드 */
-  .main {
-    display: grid;
-    grid-template-columns: 380px 1fr;
-    min-height: calc(100vh - 60px);
-  }
-
-  /* 왼쪽 - 기사 목록 */
-  .sidebar {
-    background: #fff;
-    border-right: 0.5px solid var(--line);
-    padding: 20px;
-    overflow-y: auto;
-    max-height: calc(100vh - 60px);
-    position: sticky;
-    top: 60px;
-  }
-  .sidebar-head {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 14px;
-    padding-bottom: 10px;
-    border-bottom: 0.5px solid var(--line);
-  }
-  .sidebar-head h2 {
-    font-family: var(--serif-display);
-    font-size: 14px;
-    letter-spacing: 3px;
-    margin: 0;
-  }
+  .main { display: grid; grid-template-columns: 380px 1fr; min-height: calc(100vh - 60px); }
+  .sidebar { background: #fff; border-right: 0.5px solid var(--line); padding: 20px; overflow-y: auto; max-height: calc(100vh - 60px); position: sticky; top: 60px; }
+  .sidebar-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; padding-bottom: 10px; border-bottom: 0.5px solid var(--line); }
+  .sidebar-head h2 { font-family: var(--serif-display); font-size: 14px; letter-spacing: 3px; margin: 0; }
   .article-list { display: flex; flex-direction: column; gap: 8px; }
-  .article-item {
-    border: 1px solid var(--line-soft);
-    border-radius: 5px;
-    padding: 10px 12px;
-    cursor: pointer;
-    background: #fafaf7;
-    transition: all 0.15s;
-  }
+  .article-item { border: 1px solid var(--line-soft); border-radius: 5px; padding: 10px 12px; cursor: pointer; background: #fafaf7; transition: all 0.15s; }
   .article-item:hover { border-color: var(--ink); }
-  .article-item.active {
-    border-color: var(--accent);
-    background: #fdf6f6;
-  }
-  .article-item .item-meta {
-    display: flex;
-    gap: 8px;
-    margin-bottom: 5px;
-    font-size: 10px;
-    align-items: center;
-  }
-  .article-item .badge {
-    background: var(--ink);
-    color: #fff;
-    padding: 1px 6px;
-    border-radius: 2px;
-    font-family: var(--serif-display);
-    letter-spacing: 1px;
-  }
+  .article-item.active { border-color: var(--accent); background: #fdf6f6; }
+  .article-item .item-meta { display: flex; gap: 8px; margin-bottom: 5px; font-size: 10px; align-items: center; }
+  .article-item .badge { background: var(--ink); color: #fff; padding: 1px 6px; border-radius: 2px; font-family: var(--serif-display); letter-spacing: 1px; }
   .article-item .badge.lead { background: var(--accent); }
   .article-item .item-date { color: var(--mute); font-style: italic; }
-  .article-item .item-title {
-    font-family: var(--serif-display);
-    font-size: 13px;
-    font-weight: 700;
-    line-height: 1.35;
-    margin: 0;
-  }
-
-  /* 오른쪽 - 편집 폼 */
-  .editor {
-    padding: 28px 36px 50px;
-    max-width: 800px;
-  }
-  .editor h2 {
-    font-family: var(--serif-display);
-    font-size: 22px;
-    margin: 0 0 18px;
-    padding-bottom: 10px;
-    border-bottom: 1px solid var(--ink);
-    letter-spacing: -0.5px;
-  }
+  .article-item .item-title { font-family: var(--serif-display); font-size: 13px; font-weight: 700; line-height: 1.35; margin: 0; }
+  .editor { padding: 28px 36px 50px; max-width: 800px; }
+  .editor h2 { font-family: var(--serif-display); font-size: 22px; margin: 0 0 18px; padding-bottom: 10px; border-bottom: 1px solid var(--ink); letter-spacing: -0.5px; }
   .row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
   .field { margin-bottom: 14px; }
-  label {
-    display: block;
-    font-size: 11px;
-    color: var(--mute);
-    letter-spacing: 1px;
-    margin-bottom: 4px;
-    text-transform: uppercase;
-  }
-  input, textarea, select {
-    width: 100%;
-    border: 1px solid var(--line);
-    background: #fff;
-    padding: 9px 12px;
-    font-family: var(--serif);
-    font-size: 14px;
-    color: var(--ink);
-    border-radius: 4px;
-  }
+  label { display: block; font-size: 11px; color: var(--mute); letter-spacing: 1px; margin-bottom: 4px; text-transform: uppercase; }
+  input, textarea, select { width: 100%; border: 1px solid var(--line); background: #fff; padding: 9px 12px; font-family: var(--serif); font-size: 14px; color: var(--ink); border-radius: 4px; }
   textarea { resize: vertical; line-height: 1.65; min-height: 80px; }
   .hint { font-size: 11px; color: var(--mute); margin-top: 3px; font-style: italic; }
-
-  .check-row {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 10px 12px;
-    background: #fdf6f6;
-    border: 1px solid var(--line-soft);
-    border-radius: 4px;
-    margin-bottom: 14px;
-  }
-  .check-row input[type="checkbox"] { width: auto; }
-  .check-row label {
-    margin: 0;
-    text-transform: none;
-    font-size: 13px;
-    color: var(--ink);
-    letter-spacing: 0;
-  }
-
-  .editor-actions {
-    margin-top: 20px;
-    padding-top: 16px;
-    border-top: 0.5px solid var(--line);
-    display: flex;
-    gap: 10px;
-    justify-content: space-between;
-    align-items: center;
-  }
+  .check-row { display: flex; align-items: center; gap: 8px; padding: 10px 12px; background: #fdf6f6; border: 1px solid var(--line-soft); border-radius: 4px; margin-bottom: 14px; }
+  .check-row input[type=checkbox] { width: auto; }
+  .check-row label { margin: 0; text-transform: none; font-size: 13px; color: var(--ink); letter-spacing: 0; }
+  .editor-actions { margin-top: 20px; padding-top: 16px; border-top: 0.5px solid var(--line); display: flex; gap: 10px; justify-content: space-between; align-items: center; }
   .editor-actions .left { display: flex; gap: 8px; }
   .editor-actions .right { display: flex; gap: 8px; }
-
-  .empty-editor {
-    padding: 60px 20px;
-    text-align: center;
-    color: var(--mute);
-    font-style: italic;
-  }
-
-  .opinion-section {
-    margin-top: 36px;
-    padding-top: 22px;
-    border-top: 2px solid var(--ink);
-  }
-
-  .guide {
-    margin-top: 28px;
-    padding: 14px 18px;
-    background: #f5f1e8;
-    border-left: 3px solid var(--accent);
-    font-size: 12px;
-    color: var(--mute);
-    line-height: 1.7;
-  }
-  .guide b { color: var(--ink); }
-  .guide code {
-    background: #fff;
-    padding: 1px 6px;
-    border-radius: 3px;
-    font-size: 11px;
-  }
-
-  /* 사진 피커 */
-  .photo-picker {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-  }
-  .photo-preview {
-    width: 100%;
-    min-height: 100px;
-    border: 1px dashed var(--line);
-    border-radius: 4px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: #fafaf7;
-    overflow: hidden;
-  }
-  .photo-preview img {
-    max-width: 100%;
-    max-height: 240px;
-    display: block;
-  }
-  .photo-preview.round {
-    width: 100px;
-    height: 100px;
-    border-radius: 50%;
-    margin: 0 auto;
-  }
-  .photo-preview.round img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-  .photo-preview .empty {
-    color: var(--mute);
-    font-size: 12px;
-    font-style: italic;
-  }
-  .photo-buttons {
-    display: flex;
-    gap: 8px;
-    justify-content: center;
-  }
-
+  .empty-editor { padding: 60px 20px; text-align: center; color: var(--mute); font-style: italic; }
+  .photo-picker { display: flex; flex-direction: column; gap: 10px; }
+  .photo-preview { width: 100%; min-height: 100px; border: 1px dashed var(--line); border-radius: 4px; display: flex; align-items: center; justify-content: center; background: #fafaf7; overflow: hidden; }
+  .photo-preview img { max-width: 100%; max-height: 240px; display: block; }
+  .photo-preview.round { width: 100px; height: 100px; border-radius: 50%; margin: 0 auto; }
+  .photo-preview.round img { width: 100%; height: 100%; object-fit: cover; }
+  .photo-preview .empty { color: var(--mute); font-size: 12px; font-style: italic; }
+  .photo-buttons { display: flex; gap: 8px; justify-content: center; }
   @media (max-width: 800px) {
     .main { grid-template-columns: 1fr; }
     .sidebar { position: static; max-height: none; }
@@ -306,7 +84,7 @@
   </div>
   <div class="actions">
     <label class="btn" for="file-input">📂 articles.json 불러오기</label>
-    <input id="file-input" type="file" accept=".json" style="display:none" onchange="handleFile(event)">
+    <input id="file-input" type="file" accept=".json" style="display:none">
     <button class="btn primary" onclick="saveAll()" id="save-btn" disabled>💾 전체 저장</button>
   </div>
 </div>
@@ -314,91 +92,79 @@
 <p class="status" id="status">먼저 articles.json 파일을 선택해주세요.</p>
 
 <div class="main">
-
-  <!-- 왼쪽: 기사 목록 -->
   <aside class="sidebar">
     <div class="sidebar-head">
-      <h2>기 사  목 록</h2>
+      <h2>기 사 목 록</h2>
       <button class="btn small primary" onclick="newArticle()">+ 새 기사</button>
     </div>
     <div class="article-list" id="article-list"></div>
 
     <div class="sidebar-head" style="margin-top:24px">
-      <h2>사 설  목 록</h2>
+      <h2>사 설 목 록</h2>
       <button class="btn small primary" onclick="newColumn()">+ 새 사설</button>
     </div>
     <div class="article-list" id="column-list"></div>
   </aside>
 
-  <!-- 오른쪽: 편집 폼 -->
   <main class="editor" id="editor">
-    <div class="empty-editor">
-      ← 왼쪽에서 기사를 선택하거나<br>"+ 새 기사" 버튼을 눌러주세요
-    </div>
+    <div class="empty-editor">왼쪽에서 항목을 선택하거나<br>+ 새 기사 / + 새 사설 버튼을 눌러주세요</div>
   </main>
-
 </div>
 
 <script>
-  // ---------- 상태 ----------
-  let DATA = null;       // articles.json 전체
-  let CURRENT_ID = null; // 현재 편집 중인 기사 id
-  let DIRTY = false;     // 변경 사항 있나
+  var DATA = null;
+  var CURRENT_ID = null;
+  var CURRENT_KIND = null; // 'article' or 'column'
+  var DIRTY = false;
+  var DEPTS = ['정치', '경제', '사회', '국제', '시황'];
 
-  // ---------- 부서 옵션 ----------
-  const DEPTS = ['정치', '경제', '사회', '국제', '시황'];
-
-  // ---------- 헬퍼 ----------
-  const $ = s => document.querySelector(s);
-  const setStatus = (txt, cls = 'loaded') => {
-    const s = $('#status');
-    s.textContent = txt;
-    s.className = 'status ' + cls;
-  };
-
-  const splitParas = (t) => t.split(/\n\s*\n/).map(s => s.trim()).filter(Boolean);
-
-  // 새 기사 ID 자동 생성 (a + YYYYMMDD + 일련번호 3자리)
-  function newId() {
-    const today = new Date();
-    const yyyy = today.getFullYear();
-    const mm = String(today.getMonth() + 1).padStart(2, '0');
-    const dd = String(today.getDate()).padStart(2, '0');
-    const prefix = `a${yyyy}${mm}${dd}`;
-    const sameDay = DATA.articles.filter(a => a.id.startsWith(prefix));
-    const next = String(sameDay.length + 1).padStart(3, '0');
-    return prefix + next;
+  function $(s) { return document.querySelector(s); }
+  function setText(sel, t) { var e = $(sel); if (e) e.textContent = t; }
+  function setHTML(sel, h) { var e = $(sel); if (e) e.innerHTML = h; }
+  function setStatus(t, cls) {
+    var s = $('#status');
+    s.textContent = t;
+    s.className = 'status ' + (cls || 'loaded');
   }
-
-  // 새 사설 ID 자동 생성 (c + YYYYMMDD + 일련번호 3자리)
-  function newColumnId() {
-    const today = new Date();
-    const yyyy = today.getFullYear();
-    const mm = String(today.getMonth() + 1).padStart(2, '0');
-    const dd = String(today.getDate()).padStart(2, '0');
-    const prefix = `c${yyyy}${mm}${dd}`;
-    const sameDay = (DATA.columns || []).filter(c => c.id.startsWith(prefix));
-    const next = String(sameDay.length + 1).padStart(3, '0');
-    return prefix + next;
+  function splitParas(t) {
+    return t.split(/\n\s*\n/).map(function(s){ return s.trim(); }).filter(Boolean);
+  }
+  function escAttr(s) {
+    return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
+  }
+  function escText(s) {
+    return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;');
   }
 
   function todayStr() {
-    const t = new Date();
-    return `${t.getFullYear()}-${String(t.getMonth()+1).padStart(2,'0')}-${String(t.getDate()).padStart(2,'0')}`;
+    var t = new Date();
+    return t.getFullYear() + '-' + String(t.getMonth()+1).padStart(2,'0') + '-' + String(t.getDate()).padStart(2,'0');
+  }
+  function newArticleId() {
+    var t = new Date();
+    var prefix = 'a' + t.getFullYear() + String(t.getMonth()+1).padStart(2,'0') + String(t.getDate()).padStart(2,'0');
+    var sameDay = DATA.articles.filter(function(a){ return a.id.indexOf(prefix) === 0; });
+    return prefix + String(sameDay.length + 1).padStart(3, '0');
+  }
+  function newColumnId() {
+    var t = new Date();
+    var prefix = 'c' + t.getFullYear() + String(t.getMonth()+1).padStart(2,'0') + String(t.getDate()).padStart(2,'0');
+    var sameDay = (DATA.columns || []).filter(function(c){ return c.id.indexOf(prefix) === 0; });
+    return prefix + String(sameDay.length + 1).padStart(3, '0');
   }
 
-  // ---------- 파일 불러오기 ----------
+  // ----- 파일 불러오기 -----
   function handleFile(ev) {
-    const file = ev.target.files[0];
+    var file = ev.target.files[0];
     if (!file) return;
-    const r = new FileReader();
-    r.onload = (e) => {
+    var r = new FileReader();
+    r.onload = function(e) {
       try {
         DATA = JSON.parse(e.target.result);
         if (!DATA.articles) DATA.articles = [];
         if (!DATA.reporters) DATA.reporters = [];
         if (!DATA.columns) DATA.columns = [];
-        // 옛 구조의 opinion이 있고 columns가 비어있으면 자동 마이그레이션
+        // 옛 opinion -> columns 자동 마이그레이션
         if (DATA.opinion && DATA.opinion.headline && DATA.columns.length === 0) {
           DATA.columns.push({
             id: newColumnId(),
@@ -417,11 +183,12 @@
         }
         DIRTY = false;
         CURRENT_ID = null;
-        renderList();
+        CURRENT_KIND = null;
+        renderArticleList();
         renderColumnList();
         renderEmpty();
         $('#save-btn').disabled = false;
-        setStatus(`[OK] ${file.name} 불러오기 완료`);
+        setStatus('[OK] ' + file.name + ' 불러오기 완료');
         updateMeta();
       } catch (err) {
         setStatus('[X] JSON 형식 오류: ' + err.message, 'error');
@@ -429,385 +196,160 @@
     };
     r.readAsText(file, 'UTF-8');
   }
+  document.getElementById('file-input').addEventListener('change', handleFile);
 
   function updateMeta() {
-    $('#meta').textContent = `기사 ${DATA.articles.length}개 · 기자 ${DATA.reporters.length}명${DIRTY ? ' · 변경됨' : ''}`;
+    $('#meta').textContent = '기사 ' + DATA.articles.length + '개 · 사설 ' + DATA.columns.length + '개 · 기자 ' + DATA.reporters.length + '명' + (DIRTY ? ' · 변경됨' : '');
   }
 
-  // ---------- 사설 목록 렌더 ----------
+  // ----- 목록 렌더 -----
+  function renderArticleList() {
+    var sorted = DATA.articles.slice().sort(function(a, b) {
+      return (b.date || '').localeCompare(a.date || '') || (b.id || '').localeCompare(a.id || '');
+    });
+    var html = sorted.map(function(a) {
+      var active = (a.id === CURRENT_ID && CURRENT_KIND === 'article') ? 'active' : '';
+      var leadBadge = a.isLead ? '<span class="badge lead">톱</span>' : '';
+      return '<div class="article-item ' + active + '" onclick="editArticle(\'' + a.id + '\')">' +
+        '<div class="item-meta">' + leadBadge +
+        '<span class="badge">' + escText(a.dept || '') + '</span>' +
+        '<span class="item-date">' + (a.date || '').replace(/-/g, '.') + '</span></div>' +
+        '<p class="item-title">' + escText(a.headline || '(제목 없음)') + '</p></div>';
+    }).join('');
+    setHTML('#article-list', html || '<p style="color:var(--mute);font-style:italic;text-align:center;padding:20px;font-size:12px">기사가 없습니다</p>');
+  }
+
   function renderColumnList() {
-    const sorted = [...(DATA.columns || [])].sort((a,b) =>
-      b.date.localeCompare(a.date) || b.id.localeCompare(a.id)
-    );
-    $('#column-list').innerHTML = sorted.map(c => `
-      <div class="article-item ${c.id === CURRENT_ID ? 'active' : ''}" onclick="editColumn('${c.id}')">
-        <div class="item-meta">
-          <span class="badge lead">사설</span>
-          <span class="item-date">${(c.date || '').replace(/-/g,'.')}</span>
-        </div>
-        <p class="item-title">${c.headline || '(제목 없음)'}</p>
-      </div>
-    `).join('') || '<p style="color:var(--mute);font-style:italic;text-align:center;padding:20px;font-size:12px">사설 없음</p>';
+    var sorted = (DATA.columns || []).slice().sort(function(a, b) {
+      return (b.date || '').localeCompare(a.date || '') || (b.id || '').localeCompare(a.id || '');
+    });
+    var html = sorted.map(function(c) {
+      var active = (c.id === CURRENT_ID && CURRENT_KIND === 'column') ? 'active' : '';
+      return '<div class="article-item ' + active + '" onclick="editColumn(\'' + c.id + '\')">' +
+        '<div class="item-meta"><span class="badge lead">사설</span>' +
+        '<span class="item-date">' + (c.date || '').replace(/-/g, '.') + '</span></div>' +
+        '<p class="item-title">' + escText(c.headline || '(제목 없음)') + '</p></div>';
+    }).join('');
+    setHTML('#column-list', html || '<p style="color:var(--mute);font-style:italic;text-align:center;padding:20px;font-size:12px">사설 없음</p>');
   }
 
-  // ---------- 새 사설 ----------
-  function newColumn() {
-    if (!DATA) { alert('먼저 articles.json을 불러오세요'); return; }
-    const id = newColumnId();
-    const newOne = {
-      id: id,
-      date: todayStr(),
-      label: '사 설',
-      headline: '',
-      body: '',
-      photo: '',
-      photoCaption: '',
-      authorName: '',
-      authorTitle: '',
-      authorPhoto: '',
-      author: ''
-    };
-    if (!DATA.columns) DATA.columns = [];
-    DATA.columns.push(newOne);
-    CURRENT_ID = id;
-    DIRTY = true;
-    renderList();
-    renderColumnList();
-    editColumn(id);
-    updateMeta();
+  function renderEmpty() {
+    setHTML('#editor', '<div class="empty-editor">왼쪽에서 항목을 선택하거나<br>+ 새 기사 / + 새 사설 버튼을 눌러주세요</div>');
   }
 
-  // ---------- 사설 편집 폼 ----------
-  function editColumn(id) {
-    CURRENT_ID = id;
-    const c = (DATA.columns || []).find(x => x.id === id);
-    if (!c) return;
-
-    $('#editor').innerHTML = `
-      <h2>사설 편집</h2>
-      <p style="font-size:11px;color:var(--mute);margin:-12px 0 16px;font-family:monospace">ID: ${c.id}</p>
-
-      <div class="row">
-        <div class="field">
-          <label>날짜</label>
-          <input type="date" id="c-date" value="${c.date || ''}">
-        </div>
-        <div class="field">
-          <label>라벨</label>
-          <input type="text" id="c-label" value="${escapeAttr(c.label || '사 설')}">
-        </div>
-      </div>
-
-      <div class="field">
-        <label>제목</label>
-        <input type="text" id="c-headline" value="${escapeAttr(c.headline || '')}">
-      </div>
-
-      <div class="row">
-        <div class="field">
-          <label>칼럼 사진 (본문 위 큰 사진)</label>
-          <div class="photo-picker">
-            <div class="photo-preview" id="c-column-preview">
-              ${c.photo ? `<img src="${c.photo}" alt="">` : '<span class="empty">사진 없음</span>'}
-            </div>
-            <div class="photo-buttons">
-              <label class="btn small" for="c-column-file">📷 사진 선택</label>
-              <input id="c-column-file" type="file" accept="image/*" style="display:none"
-                     onchange="pickPhoto(event, 'c-photo', 'c-column-preview')">
-              <button class="btn small" onclick="clearPhoto('c-photo', 'c-column-preview')">✕ 제거</button>
-            </div>
-            <input type="hidden" id="c-photo" value="${escapeAttr(c.photo || '')}">
-          </div>
-        </div>
-        <div class="field">
-          <label>칼럼 사진 캡션</label>
-          <input type="text" id="c-photoCaption" value="${escapeAttr(c.photoCaption || '')}">
-        </div>
-      </div>
-
-      <div class="field">
-        <label>본문</label>
-        <textarea id="c-body" rows="12">${escapeText(c.body || '')}</textarea>
-        <p class="hint">문단마다 빈 줄 하나로 구분 (Enter 두 번)</p>
-      </div>
-
-      <div class="row">
-        <div class="field">
-          <label>필자 이름</label>
-          <input type="text" id="c-authorName" value="${escapeAttr(c.authorName || '')}" placeholder="예: 박창원">
-        </div>
-        <div class="field">
-          <label>필자 직책</label>
-          <input type="text" id="c-authorTitle" value="${escapeAttr(c.authorTitle || '')}" placeholder="예: 본지 논설주간">
-        </div>
-      </div>
-
-      <div class="field">
-        <label>필자 사진</label>
-        <div class="photo-picker">
-          <div class="photo-preview round" id="c-author-preview">
-            ${c.authorPhoto ? `<img src="${c.authorPhoto}" alt="">` : '<span class="empty">사진 없음</span>'}
-          </div>
-          <div class="photo-buttons">
-            <label class="btn small" for="c-author-file">📷 사진 선택</label>
-            <input id="c-author-file" type="file" accept="image/*" style="display:none"
-                   onchange="pickPhoto(event, 'c-authorPhoto', 'c-author-preview')">
-            <button class="btn small" onclick="clearPhoto('c-authorPhoto', 'c-author-preview')">✕ 제거</button>
-          </div>
-          <input type="hidden" id="c-authorPhoto" value="${escapeAttr(c.authorPhoto || '')}">
-        </div>
-      </div>
-
-      <div class="editor-actions">
-        <div class="left">
-          <button class="btn danger" onclick="deleteColumn('${c.id}')">🗑 삭제</button>
-        </div>
-        <div class="right">
-          <button class="btn" onclick="cancelEdit()">취소</button>
-          <button class="btn primary" onclick="applyColumn()">✓ 적용</button>
-        </div>
-      </div>
-    `;
-    renderList();
-    renderColumnList();
-  }
-
-  function applyColumn() {
-    const c = (DATA.columns || []).find(x => x.id === CURRENT_ID);
-    if (!c) return;
-    c.date = $('#c-date').value;
-    c.label = $('#c-label').value;
-    c.headline = $('#c-headline').value;
-    c.body = $('#c-body').value;
-    c.photo = $('#c-photo').value;
-    c.photoCaption = $('#c-photoCaption').value;
-    c.authorName = $('#c-authorName').value;
-    c.authorTitle = $('#c-authorTitle').value;
-    c.authorPhoto = $('#c-authorPhoto').value;
-
-    DIRTY = true;
-    renderColumnList();
-    updateMeta();
-    setStatus('[OK] 사설 적용됨. "전체 저장"을 눌러야 파일로 다운로드됩니다.');
-  }
-
-  function deleteColumn(id) {
-    if (!confirm('이 사설을 삭제하시겠어요?')) return;
-    DATA.columns = (DATA.columns || []).filter(x => x.id !== id);
-    if (CURRENT_ID === id) CURRENT_ID = null;
-    DIRTY = true;
+  function cancelEdit() {
+    CURRENT_ID = null;
+    CURRENT_KIND = null;
+    renderArticleList();
     renderColumnList();
     renderEmpty();
-    updateMeta();
-    setStatus('[OK] 사설 삭제됨.');
   }
 
-  // ---------- 기사 목록 렌더 ----------
-  function renderList() {
-    const sorted = [...DATA.articles].sort((a,b) =>
-      b.date.localeCompare(a.date) || b.id.localeCompare(a.id)
-    );
-    $('#article-list').innerHTML = sorted.map(a => `
-      <div class="article-item ${a.id === CURRENT_ID ? 'active' : ''}" onclick="editArticle('${a.id}')">
-        <div class="item-meta">
-          ${a.isLead ? '<span class="badge lead">톱</span>' : ''}
-          <span class="badge">${a.dept || ''}</span>
-          <span class="item-date">${(a.date || '').replace(/-/g,'.')}</span>
-        </div>
-        <p class="item-title">${a.headline || '(제목 없음)'}</p>
-      </div>
-    `).join('') || '<p style="color:var(--mute);font-style:italic;text-align:center;padding:20px">기사가 없습니다</p>';
-  }
-
-  // ---------- 빈 편집창 ----------
-  function renderEmpty() {
-    $('#editor').innerHTML = `
-      <div class="empty-editor">
-        왼쪽에서 기사나 사설을 선택하거나<br>"+ 새 기사" 또는 "+ 새 사설" 버튼을 눌러주세요
-      </div>
-    `;
-  }
-
-  // ---------- 새 기사 ----------
-  function newArticle() {
-    if (!DATA) { alert('먼저 articles.json을 불러오세요'); return; }
-    const id = newId();
-    const newOne = {
-      id: id,
-      date: todayStr(),
-      dept: DEPTS[0],
-      reporterId: (DATA.reporters[0] || {}).id || '',
-      headline: '',
-      deck: '',
-      summary: '',
-      body: '',
-      photo: '',
-      photoCaption: '',
-      isLead: false
-    };
-    DATA.articles.push(newOne);
-    CURRENT_ID = id;
-    DIRTY = true;
-    renderList();
-    editArticle(id);
-    updateMeta();
-  }
-
-  // ---------- 기사 편집 폼 ----------
-  function editArticle(id) {
-    CURRENT_ID = id;
-    const a = DATA.articles.find(x => x.id === id);
-    if (!a) return;
-
-    const reporterOptions = DATA.reporters.map(r =>
-      `<option value="${r.id}" ${r.id === a.reporterId ? 'selected' : ''}>${r.name} (${r.dept})</option>`
-    ).join('');
-
-    const deptOptions = DEPTS.map(d =>
-      `<option value="${d}" ${d === a.dept ? 'selected' : ''}>${d}</option>`
-    ).join('');
-
-    $('#editor').innerHTML = `
-      <h2>기사 편집</h2>
-      <p style="font-size:11px;color:var(--mute);margin:-12px 0 16px;font-family:monospace">ID: ${a.id}</p>
-
-      <div class="check-row">
-        <input type="checkbox" id="f-isLead" ${a.isLead ? 'checked' : ''}>
-        <label for="f-isLead">⭐ 톱기사로 지정 (1면 메인)</label>
-      </div>
-
-      <div class="row">
-        <div class="field">
-          <label>날짜</label>
-          <input type="date" id="f-date" value="${a.date || ''}">
-        </div>
-        <div class="field">
-          <label>부서</label>
-          <select id="f-dept">${deptOptions}</select>
-        </div>
-      </div>
-
-      <div class="field">
-        <label>기자</label>
-        <select id="f-reporter">${reporterOptions}</select>
-      </div>
-
-      <div class="field">
-        <label>헤드라인</label>
-        <input type="text" id="f-headline" value="${escapeAttr(a.headline)}">
-      </div>
-
-      <div class="field">
-        <label>부제 (Deck)</label>
-        <input type="text" id="f-deck" value="${escapeAttr(a.deck || '')}">
-      </div>
-
-      <div class="field">
-        <label>요약 (1면 카드에 표시)</label>
-        <textarea id="f-summary" rows="2">${escapeText(a.summary || '')}</textarea>
-        <p class="hint">1~2문장. 톱기사면 톱기사 카드에, 일반 기사면 카드 미리보기에 표시됨</p>
-      </div>
-
-      <div class="field">
-        <label>전문 (기사 상세 페이지의 본문)</label>
-        <textarea id="f-body" rows="10">${escapeText(a.body || '')}</textarea>
-        <p class="hint">문단마다 빈 줄 하나로 구분 (Enter 두 번)</p>
-      </div>
-
-      <div class="row">
-        <div class="field">
-          <label>사진</label>
-          <div class="photo-picker">
-            <div class="photo-preview" id="f-photo-preview">
-              ${a.photo ? `<img src="${a.photo}" alt="">` : '<span class="empty">사진 없음</span>'}
-            </div>
-            <div class="photo-buttons">
-              <label class="btn small" for="f-photo-file">📷 사진 선택</label>
-              <input id="f-photo-file" type="file" accept="image/*" style="display:none"
-                     onchange="pickPhoto(event, 'f-photo', 'f-photo-preview')">
-              <button class="btn small" onclick="clearPhoto('f-photo', 'f-photo-preview')">✕ 제거</button>
-            </div>
-            <input type="hidden" id="f-photo" value="${escapeAttr(a.photo || '')}">
-          </div>
-        </div>
-        <div class="field">
-          <label>사진 캡션</label>
-          <input type="text" id="f-photoCaption" value="${escapeAttr(a.photoCaption || '')}">
-        </div>
-      </div>
-
-      <div class="editor-actions">
-        <div class="left">
-          <button class="btn danger" onclick="deleteArticle('${a.id}')">🗑 삭제</button>
-        </div>
-        <div class="right">
-          <button class="btn" onclick="cancelEdit()">취소</button>
-          <button class="btn primary" onclick="applyEdit()">✓ 적용</button>
-        </div>
-      </div>
-    `;
-    renderList();
-  }
-
-    `;
-  }
-
-  // 텍스트/속성 이스케이프
-  function escapeAttr(s) {
-    return String(s || '').replace(/"/g, '&quot;').replace(/</g, '&lt;');
-  }
-  function escapeText(s) {
-    return String(s || '').replace(/</g, '&lt;');
-  }
-
-  // ---------- 사진 선택 (파일 → Base64 자동 변환 + 리사이즈) ----------
+  // ----- 사진 처리 (Base64) -----
   function pickPhoto(event, hiddenId, previewId) {
-    const file = event.target.files[0];
+    var file = event.target.files[0];
     if (!file) return;
-
-    // 사진을 적당한 크기로 리사이즈 후 Base64 로 저장
-    // (원본을 그대로 넣으면 articles.json 이 너무 커짐)
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      const img = new Image();
-      img.onload = () => {
-        // 최대 가로/세로 1200px 이내로 축소
-        const MAX = 1200;
-        let w = img.width, h = img.height;
+    var reader = new FileReader();
+    reader.onload = function(e) {
+      var img = new Image();
+      img.onload = function() {
+        var MAX = 1200;
+        var w = img.width, h = img.height;
         if (w > MAX || h > MAX) {
           if (w > h) { h = Math.round(h * MAX / w); w = MAX; }
           else { w = Math.round(w * MAX / h); h = MAX; }
         }
-        const canvas = document.createElement('canvas');
+        var canvas = document.createElement('canvas');
         canvas.width = w;
         canvas.height = h;
-        const ctx = canvas.getContext('2d');
-        ctx.drawImage(img, 0, 0, w, h);
-        // JPEG 85% 품질로 변환
-        const dataUrl = canvas.toDataURL('image/jpeg', 0.85);
-
-        // hidden input 에 데이터 저장
+        canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+        var dataUrl = canvas.toDataURL('image/jpeg', 0.85);
         document.getElementById(hiddenId).value = dataUrl;
-        // 미리보기 갱신
-        document.getElementById(previewId).innerHTML = `<img src="${dataUrl}" alt="">`;
-
-        // 파일 크기 안내
-        const sizeKB = Math.round(dataUrl.length * 0.75 / 1024);
-        setStatus(`[OK] 사진 등록됨 (약 ${sizeKB}KB). "✓ 적용" 후 "💾 전체 저장"`);
+        var prev = document.getElementById(previewId);
+        prev.innerHTML = '';
+        var im = document.createElement('img');
+        im.src = dataUrl;
+        prev.appendChild(im);
+        var sizeKB = Math.round(dataUrl.length * 0.75 / 1024);
+        setStatus('[OK] 사진 등록됨 (약 ' + sizeKB + 'KB). 적용 후 전체 저장하세요.');
       };
       img.src = e.target.result;
     };
     reader.readAsDataURL(file);
   }
-
   function clearPhoto(hiddenId, previewId) {
     document.getElementById(hiddenId).value = '';
     document.getElementById(previewId).innerHTML = '<span class="empty">사진 없음</span>';
   }
 
-  // ---------- 적용 ----------
-  function applyEdit() {
-    const a = DATA.articles.find(x => x.id === CURRENT_ID);
+  // ----- 기사 -----
+  function newArticle() {
+    if (!DATA) { alert('먼저 articles.json을 불러오세요'); return; }
+    var id = newArticleId();
+    DATA.articles.push({
+      id: id, date: todayStr(), dept: DEPTS[0],
+      reporterId: (DATA.reporters[0] || {}).id || '',
+      headline: '', deck: '', summary: '', body: '',
+      photo: '', photoCaption: '', isLead: false
+    });
+    CURRENT_ID = id;
+    CURRENT_KIND = 'article';
+    DIRTY = true;
+    renderArticleList();
+    editArticle(id);
+    updateMeta();
+  }
+
+  function editArticle(id) {
+    CURRENT_ID = id;
+    CURRENT_KIND = 'article';
+    var a = DATA.articles.find(function(x){ return x.id === id; });
+    if (!a) return;
+    var reporterOpts = DATA.reporters.map(function(r){
+      return '<option value="' + r.id + '"' + (r.id === a.reporterId ? ' selected' : '') + '>' + escText(r.name + ' (' + r.dept + ')') + '</option>';
+    }).join('');
+    var deptOpts = DEPTS.map(function(d){
+      return '<option value="' + d + '"' + (d === a.dept ? ' selected' : '') + '>' + d + '</option>';
+    }).join('');
+    var photoPrev = a.photo ? '<img alt="">' : '<span class="empty">사진 없음</span>';
+
+    var formHTML = '<h2>기사 편집</h2>' +
+      '<p style="font-size:11px;color:var(--mute);margin:-12px 0 16px;font-family:monospace">ID: ' + a.id + '</p>' +
+      '<div class="check-row"><input type="checkbox" id="f-isLead"' + (a.isLead ? ' checked' : '') + '>' +
+      '<label for="f-isLead">⭐ 톱기사로 지정 (1면 메인)</label></div>' +
+      '<div class="row"><div class="field"><label>날짜</label><input type="date" id="f-date" value="' + (a.date || '') + '"></div>' +
+      '<div class="field"><label>부서</label><select id="f-dept">' + deptOpts + '</select></div></div>' +
+      '<div class="field"><label>기자</label><select id="f-reporter">' + reporterOpts + '</select></div>' +
+      '<div class="field"><label>헤드라인</label><input type="text" id="f-headline" value="' + escAttr(a.headline) + '"></div>' +
+      '<div class="field"><label>부제 (Deck)</label><input type="text" id="f-deck" value="' + escAttr(a.deck || '') + '"></div>' +
+      '<div class="field"><label>요약 (1면 카드)</label><textarea id="f-summary" rows="2">' + escText(a.summary || '') + '</textarea></div>' +
+      '<div class="field"><label>전문 (기사 상세 페이지 본문)</label><textarea id="f-body" rows="10">' + escText(a.body || '') + '</textarea>' +
+      '<p class="hint">문단마다 빈 줄 하나로 구분</p></div>' +
+      '<div class="row"><div class="field"><label>사진</label>' +
+      '<div class="photo-picker"><div class="photo-preview" id="f-photo-preview">' + photoPrev + '</div>' +
+      '<div class="photo-buttons">' +
+      '<label class="btn small" for="f-photo-file">📷 사진 선택</label>' +
+      '<input id="f-photo-file" type="file" accept="image/*" style="display:none" data-target-hidden="f-photo" data-target-preview="f-photo-preview">' +
+      '<button class="btn small" data-clear-hidden="f-photo" data-clear-preview="f-photo-preview">✕ 제거</button></div>' +
+      '<input type="hidden" id="f-photo" value="' + escAttr(a.photo || '') + '"></div></div>' +
+      '<div class="field"><label>사진 캡션</label><input type="text" id="f-photoCaption" value="' + escAttr(a.photoCaption || '') + '"></div></div>' +
+      '<div class="editor-actions"><div class="left"><button class="btn danger" onclick="deleteArticle(\'' + a.id + '\')">🗑 삭제</button></div>' +
+      '<div class="right"><button class="btn" onclick="cancelEdit()">취소</button>' +
+      '<button class="btn primary" onclick="applyArticle()">✓ 적용</button></div></div>';
+    setHTML('#editor', formHTML);
+
+    // 사진 미리보기 src 동적 채우기 (Base64는 HTML 문자열로 박지 않고 안전하게)
+    if (a.photo) {
+      var prevImg = document.querySelector('#f-photo-preview img');
+      if (prevImg) prevImg.src = a.photo;
+    }
+    attachPhotoHandlers();
+    renderArticleList();
+    renderColumnList();
+  }
+
+  function applyArticle() {
+    var a = DATA.articles.find(function(x){ return x.id === CURRENT_ID; });
     if (!a) return;
     a.isLead = $('#f-isLead').checked;
     a.date = $('#f-date').value;
@@ -819,44 +361,145 @@
     a.body = $('#f-body').value;
     a.photo = $('#f-photo').value;
     a.photoCaption = $('#f-photoCaption').value;
-
-    // 톱기사 단일성 — 이 기사를 톱으로 만들면 같은 날짜 다른 톱은 해제
     if (a.isLead) {
-      DATA.articles.forEach(x => {
+      DATA.articles.forEach(function(x){
         if (x.id !== a.id && x.date === a.date && x.isLead) x.isLead = false;
       });
     }
-
     DIRTY = true;
-    renderList();
+    renderArticleList();
     updateMeta();
-    setStatus('[OK] 기사 적용됨. "전체 저장"을 눌러야 파일로 다운로드됩니다.');
-  }
-
-  function cancelEdit() {
-    CURRENT_ID = null;
-    renderEmpty();
-    renderList();
+    setStatus('[OK] 기사 적용됨. 전체 저장하세요.');
   }
 
   function deleteArticle(id) {
-    if (!confirm('이 기사를 삭제하시겠어요? (전체 저장 전에는 복구 가능)')) return;
-    DATA.articles = DATA.articles.filter(x => x.id !== id);
-    if (CURRENT_ID === id) CURRENT_ID = null;
+    if (!confirm('이 기사를 삭제하시겠어요?')) return;
+    DATA.articles = DATA.articles.filter(function(x){ return x.id !== id; });
+    if (CURRENT_ID === id) { CURRENT_ID = null; CURRENT_KIND = null; }
     DIRTY = true;
-    renderList();
+    renderArticleList();
     renderEmpty();
     updateMeta();
     setStatus('[OK] 기사 삭제됨.');
   }
 
-  // ---------- 전체 저장 (다운로드) ----------
+  // ----- 사설 -----
+  function newColumn() {
+    if (!DATA) { alert('먼저 articles.json을 불러오세요'); return; }
+    var id = newColumnId();
+    if (!DATA.columns) DATA.columns = [];
+    DATA.columns.push({
+      id: id, date: todayStr(), label: '사 설',
+      headline: '', body: '',
+      photo: '', photoCaption: '',
+      authorName: '', authorTitle: '', authorPhoto: '', author: ''
+    });
+    CURRENT_ID = id;
+    CURRENT_KIND = 'column';
+    DIRTY = true;
+    renderColumnList();
+    editColumn(id);
+    updateMeta();
+  }
+
+  function editColumn(id) {
+    CURRENT_ID = id;
+    CURRENT_KIND = 'column';
+    var c = DATA.columns.find(function(x){ return x.id === id; });
+    if (!c) return;
+    var colPhotoPrev = c.photo ? '<img alt="">' : '<span class="empty">사진 없음</span>';
+    var authorPhotoPrev = c.authorPhoto ? '<img alt="">' : '<span class="empty">사진 없음</span>';
+
+    var formHTML = '<h2>사설 편집</h2>' +
+      '<p style="font-size:11px;color:var(--mute);margin:-12px 0 16px;font-family:monospace">ID: ' + c.id + '</p>' +
+      '<div class="row"><div class="field"><label>날짜</label><input type="date" id="c-date" value="' + (c.date || '') + '"></div>' +
+      '<div class="field"><label>라벨</label><input type="text" id="c-label" value="' + escAttr(c.label || '사 설') + '"></div></div>' +
+      '<div class="field"><label>제목</label><input type="text" id="c-headline" value="' + escAttr(c.headline || '') + '"></div>' +
+      '<div class="row"><div class="field"><label>칼럼 사진 (본문 위 큰 사진)</label>' +
+      '<div class="photo-picker"><div class="photo-preview" id="c-photo-preview">' + colPhotoPrev + '</div>' +
+      '<div class="photo-buttons"><label class="btn small" for="c-photo-file">📷 사진 선택</label>' +
+      '<input id="c-photo-file" type="file" accept="image/*" style="display:none" data-target-hidden="c-photo" data-target-preview="c-photo-preview">' +
+      '<button class="btn small" data-clear-hidden="c-photo" data-clear-preview="c-photo-preview">✕ 제거</button></div>' +
+      '<input type="hidden" id="c-photo" value="' + escAttr(c.photo || '') + '"></div></div>' +
+      '<div class="field"><label>칼럼 사진 캡션</label><input type="text" id="c-photoCaption" value="' + escAttr(c.photoCaption || '') + '"></div></div>' +
+      '<div class="field"><label>본문</label><textarea id="c-body" rows="12">' + escText(c.body || '') + '</textarea>' +
+      '<p class="hint">문단마다 빈 줄 하나로 구분</p></div>' +
+      '<div class="row"><div class="field"><label>필자 이름</label><input type="text" id="c-authorName" value="' + escAttr(c.authorName || '') + '"></div>' +
+      '<div class="field"><label>필자 직책</label><input type="text" id="c-authorTitle" value="' + escAttr(c.authorTitle || '') + '"></div></div>' +
+      '<div class="field"><label>필자 사진</label>' +
+      '<div class="photo-picker"><div class="photo-preview round" id="c-author-preview">' + authorPhotoPrev + '</div>' +
+      '<div class="photo-buttons"><label class="btn small" for="c-author-file">📷 사진 선택</label>' +
+      '<input id="c-author-file" type="file" accept="image/*" style="display:none" data-target-hidden="c-authorPhoto" data-target-preview="c-author-preview">' +
+      '<button class="btn small" data-clear-hidden="c-authorPhoto" data-clear-preview="c-author-preview">✕ 제거</button></div>' +
+      '<input type="hidden" id="c-authorPhoto" value="' + escAttr(c.authorPhoto || '') + '"></div></div>' +
+      '<div class="editor-actions"><div class="left"><button class="btn danger" onclick="deleteColumn(\'' + c.id + '\')">🗑 삭제</button></div>' +
+      '<div class="right"><button class="btn" onclick="cancelEdit()">취소</button>' +
+      '<button class="btn primary" onclick="applyColumn()">✓ 사설 적용</button></div></div>';
+    setHTML('#editor', formHTML);
+
+    if (c.photo) {
+      var p = document.querySelector('#c-photo-preview img');
+      if (p) p.src = c.photo;
+    }
+    if (c.authorPhoto) {
+      var ap = document.querySelector('#c-author-preview img');
+      if (ap) ap.src = c.authorPhoto;
+    }
+    attachPhotoHandlers();
+    renderArticleList();
+    renderColumnList();
+  }
+
+  function applyColumn() {
+    var c = DATA.columns.find(function(x){ return x.id === CURRENT_ID; });
+    if (!c) return;
+    c.date = $('#c-date').value;
+    c.label = $('#c-label').value;
+    c.headline = $('#c-headline').value;
+    c.body = $('#c-body').value;
+    c.photo = $('#c-photo').value;
+    c.photoCaption = $('#c-photoCaption').value;
+    c.authorName = $('#c-authorName').value;
+    c.authorTitle = $('#c-authorTitle').value;
+    c.authorPhoto = $('#c-authorPhoto').value;
+    DIRTY = true;
+    renderColumnList();
+    updateMeta();
+    setStatus('[OK] 사설 적용됨. 전체 저장하세요.');
+  }
+
+  function deleteColumn(id) {
+    if (!confirm('이 사설을 삭제하시겠어요?')) return;
+    DATA.columns = DATA.columns.filter(function(x){ return x.id !== id; });
+    if (CURRENT_ID === id) { CURRENT_ID = null; CURRENT_KIND = null; }
+    DIRTY = true;
+    renderColumnList();
+    renderEmpty();
+    updateMeta();
+    setStatus('[OK] 사설 삭제됨.');
+  }
+
+  // 사진 핸들러 등록 (편집 폼이 새로 그려질 때마다)
+  function attachPhotoHandlers() {
+    document.querySelectorAll('input[type=file][data-target-hidden]').forEach(function(input){
+      input.addEventListener('change', function(e){
+        pickPhoto(e, input.dataset.targetHidden, input.dataset.targetPreview);
+      });
+    });
+    document.querySelectorAll('button[data-clear-hidden]').forEach(function(btn){
+      btn.addEventListener('click', function(){
+        clearPhoto(btn.dataset.clearHidden, btn.dataset.clearPreview);
+      });
+    });
+  }
+
+  // ----- 전체 저장 -----
   function saveAll() {
     if (!DATA) return;
-    const json = JSON.stringify(DATA, null, 2);
-    const blob = new Blob([json], {type: 'application/json'});
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
+    var json = JSON.stringify(DATA, null, 2);
+    var blob = new Blob([json], {type: 'application/json'});
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
     a.href = url;
     a.download = 'articles.json';
     a.click();
