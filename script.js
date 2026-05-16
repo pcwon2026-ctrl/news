@@ -12,6 +12,57 @@
 
 (function () {
 
+  // ============================================================
+  // 공유 버튼 자동 생성 — 모든 페이지에 우측 상단 떠 있음
+  // PC 신문(file:///)에서도 진짜 인터넷 URL을 클립보드에 복사
+  // ============================================================
+  const SITE_URL = 'https://pcwon2026-ctrl.github.io/news';
+
+  function makeShareUrl() {
+    const pathname = location.pathname;
+    const search = location.search;
+
+    // file:/// 경로면 → 신문 폴더 이후 부분만 추출해서 https URL로 변환
+    if (location.protocol === 'file:') {
+      // 예: file:///C:/Users/intty/한국정치경제신문/column/c2026....html
+      //  → /column/c2026....html 만 뽑아내기
+      const idx = pathname.indexOf('/한국정치경제신문/');
+      if (idx >= 0) {
+        const rel = pathname.substring(idx + '/한국정치경제신문/'.length);
+        return SITE_URL + '/' + rel + search;
+      }
+      // fallback — index.html 가정
+      return SITE_URL + '/';
+    }
+
+    // https://, http:// 이면 그대로
+    return location.origin + pathname + search;
+  }
+
+  function injectShareButton() {
+    const btn = document.createElement('button');
+    btn.className = 'share-btn';
+    btn.textContent = '🔗 공유 URL 복사';
+    btn.onclick = async () => {
+      const url = makeShareUrl();
+      try {
+        await navigator.clipboard.writeText(url);
+        btn.textContent = '✓ 복사됨!';
+        btn.classList.add('copied');
+        setTimeout(() => {
+          btn.textContent = '🔗 공유 URL 복사';
+          btn.classList.remove('copied');
+        }, 2000);
+      } catch (e) {
+        // clipboard API 실패 시 fallback: 화면에 띄워서 직접 복사
+        prompt('이 URL을 복사하세요 (Ctrl+C):', url);
+      }
+    };
+    document.body.appendChild(btn);
+  }
+
+  injectShareButton();
+
   // ---- 공통: 날짜·호수·메뉴 ----
   const FOUNDING_DATE = new Date(2026, 0, 1);
   const today = new Date();

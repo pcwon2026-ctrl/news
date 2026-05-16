@@ -570,6 +570,40 @@ footer {
 }
 
 /* ============================================ */
+/* 공유 버튼 (모든 페이지 우측 상단)             */
+/* ============================================ */
+.share-btn {
+  position: fixed;
+  top: 16px;
+  right: 16px;
+  z-index: 100;
+  background: #fff;
+  border: 1px solid var(--ink);
+  color: var(--ink);
+  font-family: var(--serif);
+  font-size: 12px;
+  padding: 8px 14px;
+  border-radius: 20px;
+  cursor: pointer;
+  letter-spacing: 1px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+  transition: all 0.15s;
+}
+.share-btn:hover {
+  background: var(--ink);
+  color: #fff;
+}
+.share-btn.copied {
+  background: #2a7a2a;
+  color: #fff;
+  border-color: #2a7a2a;
+}
+
+@media (max-width: 600px) {
+  .share-btn { font-size: 11px; padding: 6px 12px; }
+}
+
+/* ============================================ */
 /* 1면 — 기사 카드 그리드 (Phase 1)              */
 /* ============================================ */
 .article-cards {

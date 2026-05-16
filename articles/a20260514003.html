@@ -21,6 +21,16 @@
 <link rel="stylesheet" href="../style.css">
 </head>
 <body>
+
+<button class="share-btn" onclick="(function(){
+  var u=location.protocol==='file:'?'https://pcwon2026-ctrl.github.io/news/articles/a20260514003.html':location.href;
+  navigator.clipboard.writeText(u).then(function(){
+    var b=document.querySelector('.share-btn');
+    b.textContent='✓ 복사됨!';b.classList.add('copied');
+    setTimeout(function(){b.textContent='🔗 공유 URL 복사';b.classList.remove('copied');},2000);
+  }).catch(function(){prompt('이 URL을 복사하세요 (Ctrl+C):',u);});
+})()">🔗 공유 URL 복사</button>
+
 <div class="paper">
 
   <div class="top-strip">
