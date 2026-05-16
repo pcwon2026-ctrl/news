@@ -1,5 +1,5 @@
 // 한국정치경제신문 · 일간 데이터
-// 자동 생성: 2026-05-14 16:37:32
+// 자동 생성: 2026-05-16 14:56:02
 window.NEWSPAPER = {
   "reporters": [
     {
@@ -94,38 +94,38 @@ window.NEWSPAPER = {
   "market": [
     {
       "name": "KOSPI",
-      "value": "7,981.41 ▲1.75%",
-      "dir": "up"
-    },
-    {
-      "name": "KOSDAQ",
-      "value": "1,191.09 ▲1.20%",
-      "dir": "up"
-    },
-    {
-      "name": "KOSPI200",
-      "value": "1,243.17 ▲1.88%",
-      "dir": "up"
-    },
-    {
-      "name": "USD/KRW",
-      "value": "1,488.24 ▼0.07%",
+      "value": "7,493.18 ▼6.12%",
       "dir": "down"
     },
     {
+      "name": "KOSDAQ",
+      "value": "1,129.82 ▼5.14%",
+      "dir": "down"
+    },
+    {
+      "name": "KOSPI200",
+      "value": "1,162.39 ▼6.50%",
+      "dir": "down"
+    },
+    {
+      "name": "USD/KRW",
+      "value": "1,497.76 ▲0.34%",
+      "dir": "up"
+    },
+    {
       "name": "다우",
-      "value": "49,693.20 ▼0.14%",
+      "value": "49,526.17 ▼1.07%",
       "dir": "down"
     },
     {
       "name": "필라델피아",
-      "value": "12,017.98 ▲2.57%",
-      "dir": "up"
+      "value": "11,588.46 ▼4.02%",
+      "dir": "down"
     },
     {
       "name": "나스닥",
-      "value": "26,402.34 ▲1.20%",
-      "dir": "up"
+      "value": "26,225.15 ▼1.54%",
+      "dir": "down"
     }
   ]
 };
