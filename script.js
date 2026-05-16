@@ -86,7 +86,7 @@
       if (leadSummary) leadSummary.textContent = lead.summary || '';
 
       const leadLink = $('[data-lead-link]');
-      if (leadLink) leadLink.href = `article.html?id=${lead.id}`;
+      if (leadLink) leadLink.href = `articles/${lead.id}.html`;
     }
 
     // ---- 기사 카드 목록 ----
@@ -95,7 +95,7 @@
       const meta = r ? `${r.dept}부 / ${r.name}` : '';
       const thumb = a.photo ? `<img class="thumb" src="${a.photo}" alt="">` : '';
       return `
-        <a class="article-card-link" href="article.html?id=${a.id}">
+        <a class="article-card-link" href="articles/${a.id}.html">
           ${thumb}
           <p class="dept">${deptLabel(a.dept)}</p>
           <h3>${a.headline}</h3>
@@ -195,7 +195,7 @@
         const r = reporterById(a.reporterId);
         return `
           <div class="archive-item">
-            <a href="article.html?id=${a.id}">
+            <a href="articles/${a.id}.html">
               <div class="row">
                 <span class="dept">${deptLabel(a.dept)}부</span>
                 <span class="date">${fmtDate(a.date)}${r ? ' · ' + r.name + ' 기자' : ''}</span>
