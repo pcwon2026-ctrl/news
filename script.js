@@ -122,6 +122,23 @@
       if (D.opinion.body) {
         html('[data-opinion-body]', D.opinion.body.map(p => `<p>${p}</p>`).join(''));
       }
+
+      // 필자 사진 처리
+      const authorRow = $('[data-opinion-author-row]');
+      const authorPara = $('[data-opinion-author]');
+      if (D.opinion.authorPhoto) {
+        // 사진 있으면: 필자 카드 보이고, 기존 텍스트 author 숨김
+        authorRow.style.display = 'flex';
+        if (authorPara) authorPara.style.display = 'none';
+        const img = $('[data-opinion-author-photo]');
+        if (img) img.src = D.opinion.authorPhoto;
+        set('[data-opinion-author-name]', D.opinion.authorName || '');
+        set('[data-opinion-author-title]', D.opinion.authorTitle || D.opinion.author || '');
+      } else {
+        // 사진 없으면 기존 텍스트 author 만 보임
+        authorRow.style.display = 'none';
+        if (authorPara) authorPara.style.display = '';
+      }
     }
   }
 

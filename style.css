@@ -294,6 +294,38 @@ article .body p {
   margin-top: 10px;
 }
 
+/* 사설 필자 사진 */
+.opinion .author-row {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 0.5px solid var(--hair);
+}
+.opinion .author-photo {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 0.5px solid var(--hair);
+  flex-shrink: 0;
+}
+.opinion .author-text {
+  text-align: right;
+  font-style: italic;
+  color: var(--ink-mute);
+  font-size: 13px;
+}
+.opinion .author-text .name {
+  display: block;
+  font-style: normal;
+  color: var(--ink);
+  font-weight: 500;
+  margin-bottom: 2px;
+}
+
 /* 푸터 */
 footer {
   margin-top: 36px;

@@ -246,6 +246,50 @@
     font-size: 11px;
   }
 
+  /* 사진 피커 */
+  .photo-picker {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .photo-preview {
+    width: 100%;
+    min-height: 100px;
+    border: 1px dashed var(--line);
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #fafaf7;
+    overflow: hidden;
+  }
+  .photo-preview img {
+    max-width: 100%;
+    max-height: 240px;
+    display: block;
+  }
+  .photo-preview.round {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    margin: 0 auto;
+  }
+  .photo-preview.round img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .photo-preview .empty {
+    color: var(--mute);
+    font-size: 12px;
+    font-style: italic;
+  }
+  .photo-buttons {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+  }
+
   @media (max-width: 800px) {
     .main { grid-template-columns: 1fr; }
     .sidebar { position: static; max-height: none; }
@@ -469,9 +513,19 @@
 
       <div class="row">
         <div class="field">
-          <label>사진 파일명</label>
-          <input type="text" id="f-photo" value="${escapeAttr(a.photo || '')}" placeholder="예: images/survey.jpg">
-          <p class="hint">images/ 폴더 안 파일. 비워두면 사진 없음</p>
+          <label>사진</label>
+          <div class="photo-picker">
+            <div class="photo-preview" id="f-photo-preview">
+              ${a.photo ? `<img src="${a.photo}" alt="">` : '<span class="empty">사진 없음</span>'}
+            </div>
+            <div class="photo-buttons">
+              <label class="btn small" for="f-photo-file">📷 사진 선택</label>
+              <input id="f-photo-file" type="file" accept="image/*" style="display:none"
+                     onchange="pickPhoto(event, 'f-photo', 'f-photo-preview')">
+              <button class="btn small" onclick="clearPhoto('f-photo', 'f-photo-preview')">✕ 제거</button>
+            </div>
+            <input type="hidden" id="f-photo" value="${escapeAttr(a.photo || '')}">
+          </div>
         </div>
         <div class="field">
           <label>사진 캡션</label>
@@ -512,10 +566,40 @@
           <label>본문</label>
           <textarea id="o-body" rows="4">${escapeText((o.body || []).join('\n\n'))}</textarea>
         </div>
+
+        <div class="row">
+          <div class="field">
+            <label>필자 이름</label>
+            <input type="text" id="o-authorName" value="${escapeAttr(o.authorName || '')}" placeholder="예: 박창원">
+          </div>
+          <div class="field">
+            <label>필자 직책</label>
+            <input type="text" id="o-authorTitle" value="${escapeAttr(o.authorTitle || '')}" placeholder="예: 본지 논설위원">
+          </div>
+        </div>
+
         <div class="field">
-          <label>작성자</label>
+          <label>필자 사진</label>
+          <div class="photo-picker">
+            <div class="photo-preview round" id="o-photo-preview">
+              ${o.authorPhoto ? `<img src="${o.authorPhoto}" alt="">` : '<span class="empty">사진 없음</span>'}
+            </div>
+            <div class="photo-buttons">
+              <label class="btn small" for="o-photo-file">📷 사진 선택</label>
+              <input id="o-photo-file" type="file" accept="image/*" style="display:none"
+                     onchange="pickPhoto(event, 'o-authorPhoto', 'o-photo-preview')">
+              <button class="btn small" onclick="clearPhoto('o-authorPhoto', 'o-photo-preview')">✕ 제거</button>
+            </div>
+            <input type="hidden" id="o-authorPhoto" value="${escapeAttr(o.authorPhoto || '')}">
+          </div>
+          <p class="hint">정사각형 사진이 가장 잘 어울려요. 사설에 둥글게 표시됩니다.</p>
+        </div>
+
+        <div class="field">
+          <label>(구) 작성자 텍스트 — 사진 없을 때만 표시</label>
           <input type="text" id="o-author" value="${escapeAttr(o.author || '')}">
         </div>
+
         <div style="text-align:right;margin-top:10px">
           <button class="btn primary" onclick="applyOpinion()">✓ 사설 적용</button>
         </div>
@@ -529,6 +613,51 @@
   }
   function escapeText(s) {
     return String(s || '').replace(/</g, '&lt;');
+  }
+
+  // ---------- 사진 선택 (파일 → Base64 자동 변환 + 리사이즈) ----------
+  function pickPhoto(event, hiddenId, previewId) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    // 사진을 적당한 크기로 리사이즈 후 Base64 로 저장
+    // (원본을 그대로 넣으면 articles.json 이 너무 커짐)
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const img = new Image();
+      img.onload = () => {
+        // 최대 가로/세로 1200px 이내로 축소
+        const MAX = 1200;
+        let w = img.width, h = img.height;
+        if (w > MAX || h > MAX) {
+          if (w > h) { h = Math.round(h * MAX / w); w = MAX; }
+          else { w = Math.round(w * MAX / h); h = MAX; }
+        }
+        const canvas = document.createElement('canvas');
+        canvas.width = w;
+        canvas.height = h;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, w, h);
+        // JPEG 85% 품질로 변환
+        const dataUrl = canvas.toDataURL('image/jpeg', 0.85);
+
+        // hidden input 에 데이터 저장
+        document.getElementById(hiddenId).value = dataUrl;
+        // 미리보기 갱신
+        document.getElementById(previewId).innerHTML = `<img src="${dataUrl}" alt="">`;
+
+        // 파일 크기 안내
+        const sizeKB = Math.round(dataUrl.length * 0.75 / 1024);
+        setStatus(`[OK] 사진 등록됨 (약 ${sizeKB}KB). "✓ 적용" 후 "💾 전체 저장"`);
+      };
+      img.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+  }
+
+  function clearPhoto(hiddenId, previewId) {
+    document.getElementById(hiddenId).value = '';
+    document.getElementById(previewId).innerHTML = '<span class="empty">사진 없음</span>';
   }
 
   // ---------- 적용 ----------
@@ -564,6 +693,9 @@
       label: $('#o-label').value,
       headline: $('#o-headline').value,
       body: splitParas($('#o-body').value),
+      authorName: $('#o-authorName').value,
+      authorTitle: $('#o-authorTitle').value,
+      authorPhoto: $('#o-authorPhoto').value,
       author: $('#o-author').value
     };
     DIRTY = true;
