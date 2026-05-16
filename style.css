@@ -286,6 +286,24 @@ article .body p {
   margin-bottom: 0.8em;
   text-align: justify;
 }
+
+/* 사설 칼럼 사진 (본문 위 큰 사진) */
+.opinion .column-photo {
+  margin: 0 0 18px;
+}
+.opinion .column-photo img {
+  width: 100%;
+  height: auto;
+  display: block;
+  border: 0.5px solid var(--hair);
+}
+.opinion .column-photo .caption {
+  font-size: 12px;
+  color: var(--ink-mute);
+  font-style: italic;
+  margin-top: 8px;
+  text-align: center;
+}
 .opinion .author {
   text-align: right;
   font-style: italic;

@@ -123,6 +123,20 @@
         html('[data-opinion-body]', D.opinion.body.map(p => `<p>${p}</p>`).join(''));
       }
 
+      // 칼럼 사진 처리 (본문 위 큰 사진)
+      const opPhoto = $('[data-opinion-photo]');
+      if (opPhoto) {
+        if (D.opinion.photo) {
+          opPhoto.style.display = 'block';
+          const img = opPhoto.querySelector('img');
+          const cap = opPhoto.querySelector('.caption');
+          if (img) img.src = D.opinion.photo;
+          if (cap) cap.textContent = D.opinion.photoCaption || '';
+        } else {
+          opPhoto.style.display = 'none';
+        }
+      }
+
       // 필자 사진 처리
       const authorRow = $('[data-opinion-author-row]');
       const authorPara = $('[data-opinion-author]');

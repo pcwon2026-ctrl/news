@@ -569,6 +569,28 @@
 
         <div class="row">
           <div class="field">
+            <label>칼럼 사진 (본문 위 큰 사진)</label>
+            <div class="photo-picker">
+              <div class="photo-preview" id="o-column-preview">
+                ${o.photo ? `<img src="${o.photo}" alt="">` : '<span class="empty">사진 없음</span>'}
+              </div>
+              <div class="photo-buttons">
+                <label class="btn small" for="o-column-file">📷 사진 선택</label>
+                <input id="o-column-file" type="file" accept="image/*" style="display:none"
+                       onchange="pickPhoto(event, 'o-photo', 'o-column-preview')">
+                <button class="btn small" onclick="clearPhoto('o-photo', 'o-column-preview')">✕ 제거</button>
+              </div>
+              <input type="hidden" id="o-photo" value="${escapeAttr(o.photo || '')}">
+            </div>
+          </div>
+          <div class="field">
+            <label>칼럼 사진 캡션</label>
+            <input type="text" id="o-photoCaption" value="${escapeAttr(o.photoCaption || '')}">
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="field">
             <label>필자 이름</label>
             <input type="text" id="o-authorName" value="${escapeAttr(o.authorName || '')}" placeholder="예: 박창원">
           </div>
@@ -693,6 +715,8 @@
       label: $('#o-label').value,
       headline: $('#o-headline').value,
       body: splitParas($('#o-body').value),
+      photo: $('#o-photo').value,
+      photoCaption: $('#o-photoCaption').value,
       authorName: $('#o-authorName').value,
       authorTitle: $('#o-authorTitle').value,
       authorPhoto: $('#o-authorPhoto').value,
