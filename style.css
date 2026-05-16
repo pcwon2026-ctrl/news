@@ -287,9 +287,11 @@ article .body p {
   text-align: justify;
 }
 
-/* 사설 칼럼 사진 (본문 위 큰 사진) */
+/* 사설 칼럼 사진 (본문 옆 명함 크기) */
 .opinion .column-photo {
-  margin: 0 0 18px;
+  float: right;
+  width: 180px;
+  margin: 0 0 12px 18px;
 }
 .opinion .column-photo img {
   width: 100%;
@@ -298,11 +300,12 @@ article .body p {
   border: 0.5px solid var(--hair);
 }
 .opinion .column-photo .caption {
-  font-size: 12px;
+  font-size: 11px;
   color: var(--ink-mute);
   font-style: italic;
-  margin-top: 8px;
+  margin-top: 6px;
   text-align: center;
+  line-height: 1.4;
 }
 .opinion .author {
   text-align: right;
@@ -790,4 +793,5 @@ footer {
   .lead-body { column-count: 1; }
   .col--politics article .body.two-col { column-count: 1; }
   .main-grid { grid-template-columns: 1fr; gap: 24px; }
+  .opinion .column-photo { width: 140px; margin: 0 0 10px 12px; }
 }
