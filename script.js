@@ -114,24 +114,33 @@
       html('[data-market-small]', rows);
     }
 
-    // ---- 사설 ----
-    if (D.opinion) {
-      set('[data-opinion-label]', D.opinion.label);
-      set('[data-opinion-headline]', D.opinion.headline);
-      set('[data-opinion-author]', D.opinion.author);
-      if (D.opinion.body) {
-        html('[data-opinion-body]', D.opinion.body.map(p => `<p>${p}</p>`).join(''));
+    // ---- 사설 (columns 배열에서 최신 1개) ----
+    const cols = (D.columns || []).slice().sort((a, b) =>
+      b.date.localeCompare(a.date) || b.id.localeCompare(a.id)
+    );
+    const op = cols[0];  // 가장 최신 사설
+    if (op) {
+      set('[data-opinion-label]', op.label);
+      set('[data-opinion-headline]', op.headline);
+      set('[data-opinion-author]', op.author);
+      if (op.body) {
+        const paras = op.body.split(/\n\s*\n/).map(p => p.trim()).filter(Boolean);
+        html('[data-opinion-body]', paras.map(p => `<p>${p}</p>`).join(''));
       }
 
-      // 칼럼 사진 처리 (본문 위 큰 사진)
+      // 사설 단독 URL 링크
+      const opLink = $('[data-opinion-link]');
+      if (opLink) opLink.href = `column/${op.id}.html`;
+
+      // 칼럼 사진 (본문 위 큰 사진)
       const opPhoto = $('[data-opinion-photo]');
       if (opPhoto) {
-        if (D.opinion.photo) {
+        if (op.photo) {
           opPhoto.style.display = 'block';
           const img = opPhoto.querySelector('img');
           const cap = opPhoto.querySelector('.caption');
-          if (img) img.src = D.opinion.photo;
-          if (cap) cap.textContent = D.opinion.photoCaption || '';
+          if (img) img.src = op.photo;
+          if (cap) cap.textContent = op.photoCaption || '';
         } else {
           opPhoto.style.display = 'none';
         }
@@ -140,16 +149,22 @@
       // 필자 사진 처리
       const authorRow = $('[data-opinion-author-row]');
       const authorPara = $('[data-opinion-author]');
-      if (D.opinion.authorPhoto) {
-        // 사진 있으면: 필자 카드 보이고, 기존 텍스트 author 숨김
+      if (op.authorPhoto) {
         authorRow.style.display = 'flex';
         if (authorPara) authorPara.style.display = 'none';
         const img = $('[data-opinion-author-photo]');
-        if (img) img.src = D.opinion.authorPhoto;
-        set('[data-opinion-author-name]', D.opinion.authorName || '');
-        set('[data-opinion-author-title]', D.opinion.authorTitle || D.opinion.author || '');
+        if (img) img.src = op.authorPhoto;
+        set('[data-opinion-author-name]', op.authorName || '');
+        set('[data-opinion-author-title]', op.authorTitle || op.author || '');
+      } else if (op.authorName || op.authorTitle) {
+        // 사진 없어도 이름/직책 있으면 표시
+        authorRow.style.display = 'flex';
+        if (authorPara) authorPara.style.display = 'none';
+        const img = $('[data-opinion-author-photo]');
+        if (img) img.style.display = 'none';
+        set('[data-opinion-author-name]', op.authorName || '');
+        set('[data-opinion-author-title]', op.authorTitle || '');
       } else {
-        // 사진 없으면 기존 텍스트 author 만 보임
         authorRow.style.display = 'none';
         if (authorPara) authorPara.style.display = '';
       }
@@ -205,10 +220,31 @@
   }
 
   // ============================================================
-  // archive.html — 아카이브 페이지
+  // archive.html — 아카이브 페이지 (기사 + 사설)
   // ============================================================
   function renderArchive() {
-    const all = (D.articles || []).slice().sort((a, b) => b.date.localeCompare(a.date) || b.id.localeCompare(a.id));
+    // 기사 + 사설 합치기
+    const articles = (D.articles || []).map(a => ({
+      kind: 'article',
+      id: a.id,
+      date: a.date,
+      dept: a.dept,
+      headline: a.headline,
+      summary: a.summary,
+      reporterId: a.reporterId
+    }));
+    const columns = (D.columns || []).map(c => ({
+      kind: 'column',
+      id: c.id,
+      date: c.date,
+      dept: '사설',
+      headline: c.headline,
+      summary: (c.body || '').split('\n\n')[0].slice(0, 80) + '...',
+      authorName: c.authorName
+    }));
+    const all = [...articles, ...columns].sort((a, b) =>
+      b.date.localeCompare(a.date) || b.id.localeCompare(a.id)
+    );
     const departments = ['전체', ...new Set(all.map(a => a.dept))];
 
     // 필터 버튼
@@ -223,13 +259,22 @@
     function showList(filter) {
       const filtered = filter === '전체' ? all : all.filter(a => a.dept === filter);
       const itemsHtml = filtered.map(a => {
-        const r = reporterById(a.reporterId);
+        let metaRight = '';
+        if (a.kind === 'article') {
+          const r = reporterById(a.reporterId);
+          metaRight = `${fmtDate(a.date)}${r ? ' · ' + r.name + ' 기자' : ''}`;
+        } else {
+          metaRight = `${fmtDate(a.date)}${a.authorName ? ' · ' + a.authorName : ''}`;
+        }
+        const url = a.kind === 'article'
+          ? `articles/${a.id}.html`
+          : `column/${a.id}.html`;
         return `
           <div class="archive-item">
-            <a href="articles/${a.id}.html">
+            <a href="${url}">
               <div class="row">
-                <span class="dept">${deptLabel(a.dept)}부</span>
-                <span class="date">${fmtDate(a.date)}${r ? ' · ' + r.name + ' 기자' : ''}</span>
+                <span class="dept">${deptLabel(a.dept)}${a.kind === 'article' ? '부' : ''}</span>
+                <span class="date">${metaRight}</span>
               </div>
               <h3>${a.headline}</h3>
               <p class="summary">${a.summary || ''}</p>
@@ -241,7 +286,6 @@
     }
     showList('전체');
 
-    // 필터 클릭 이벤트
     if (filterEl) {
       filterEl.addEventListener('click', (e) => {
         if (e.target.tagName !== 'BUTTON') return;
