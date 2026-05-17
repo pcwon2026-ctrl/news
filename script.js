@@ -128,7 +128,13 @@
 
     // ---- 톱기사 영역 ----
     if (lead) {
-      set('[data-lead-dept]', `${deptLabel(lead.dept)}부`);
+      const leadFlagEl = $('[data-lead-dept]');
+      if (leadFlagEl) {
+        leadFlagEl.textContent = `${deptLabel(lead.dept)}부`;
+        // 옛 dept- 클래스 제거 후 새 클래스 추가
+        leadFlagEl.className = leadFlagEl.className.replace(/dept-\S+/g, '').trim();
+        if (lead.dept) leadFlagEl.classList.add('dept-' + lead.dept);
+      }
       set('[data-lead-headline]', lead.headline);
       set('[data-lead-deck]', lead.deck);
       const reporter = reporterById(lead.reporterId);

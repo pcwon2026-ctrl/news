@@ -62,8 +62,16 @@ body {
   top: -28px;
   left: -40px;
   right: -40px;
-  height: 3px;
-  background: linear-gradient(90deg, var(--dept-politics) 0%, var(--dept-economy) 33%, var(--dept-society) 66%, var(--dept-world) 100%);
+  height: 5px;
+  background: linear-gradient(90deg,
+    var(--dept-politics) 0%,
+    var(--dept-politics) 25%,
+    var(--dept-economy) 25%,
+    var(--dept-economy) 50%,
+    var(--dept-society) 50%,
+    var(--dept-society) 75%,
+    var(--dept-world) 75%,
+    var(--dept-world) 100%);
 }
 
 /* 제호 (마스트헤드) */
@@ -121,12 +129,21 @@ body {
   border-bottom: 0.5px solid var(--hair);
 }
 .lead .flag {
+  display: inline-block;
   font-family: var(--serif-display);
   font-size: 11px;
+  font-weight: 700;
   letter-spacing: 4px;
-  color: var(--accent);
-  margin-bottom: 10px;
+  color: #fff;
+  margin-bottom: 14px;
+  padding: 4px 14px;
+  background: var(--accent);
 }
+.lead .flag.dept-정치 { background: var(--dept-politics); }
+.lead .flag.dept-경제 { background: var(--dept-economy); }
+.lead .flag.dept-사회 { background: var(--dept-society); }
+.lead .flag.dept-국제 { background: var(--dept-world); }
+.lead .flag.dept-시황 { background: var(--dept-market); }
 .lead h2 {
   font-family: var(--serif-display);
   font-size: 46px;
@@ -654,21 +671,21 @@ footer {
 .article-card-link .dept {
   display: inline-block;
   font-family: var(--serif-display);
-  font-size: 10px;
+  font-size: 11px;
+  font-weight: 700;
   letter-spacing: 3px;
-  color: var(--accent);
-  margin: 0 0 8px;
-  padding: 3px 8px;
-  background: var(--accent-soft);
-  border-left: 2px solid var(--accent);
+  color: #fff;
+  margin: 0 0 10px;
+  padding: 4px 12px;
+  background: var(--accent);
 }
 
-/* 부서별 색상 — 카드 라벨 */
-.article-card-link .dept.dept-정치 { color: var(--dept-politics); border-left-color: var(--dept-politics); background: #F0F4FA; }
-.article-card-link .dept.dept-경제 { color: var(--dept-economy); border-left-color: var(--dept-economy); background: #FDF6F6; }
-.article-card-link .dept.dept-사회 { color: var(--dept-society); border-left-color: var(--dept-society); background: #F0F6F4; }
-.article-card-link .dept.dept-국제 { color: var(--dept-world); border-left-color: var(--dept-world); background: #FAF6F0; }
-.article-card-link .dept.dept-시황 { color: var(--dept-market); border-left-color: var(--dept-market); background: #F5F5F5; }
+/* 부서별 색상 — 카드 라벨 (진한 배경 + 흰 글씨) */
+.article-card-link .dept.dept-정치 { background: var(--dept-politics); }
+.article-card-link .dept.dept-경제 { background: var(--dept-economy); }
+.article-card-link .dept.dept-사회 { background: var(--dept-society); }
+.article-card-link .dept.dept-국제 { background: var(--dept-world); }
+.article-card-link .dept.dept-시황 { background: var(--dept-market); }
 
 .article-card-link h3 {
   font-family: var(--serif-display);
@@ -707,20 +724,20 @@ footer {
 .article-page .dept-tag {
   display: inline-block;
   font-family: var(--serif-display);
-  font-size: 11px;
+  font-size: 12px;
+  font-weight: 700;
   letter-spacing: 4px;
-  color: var(--accent);
+  color: #fff;
   text-align: center;
-  margin: 0 auto 14px;
-  padding: 4px 12px;
-  background: var(--accent-soft);
-  border-radius: 2px;
+  margin: 0 auto 18px;
+  padding: 6px 16px;
+  background: var(--accent);
 }
-.article-page .dept-tag-정치 { color: var(--dept-politics); background: #F0F4FA; }
-.article-page .dept-tag-경제 { color: var(--dept-economy); background: #FDF6F6; }
-.article-page .dept-tag-사회 { color: var(--dept-society); background: #F0F6F4; }
-.article-page .dept-tag-국제 { color: var(--dept-world); background: #FAF6F0; }
-.article-page .dept-tag-시황 { color: var(--dept-market); background: #F5F5F5; }
+.article-page .dept-tag-정치 { background: var(--dept-politics); }
+.article-page .dept-tag-경제 { background: var(--dept-economy); }
+.article-page .dept-tag-사회 { background: var(--dept-society); }
+.article-page .dept-tag-국제 { background: var(--dept-world); }
+.article-page .dept-tag-시황 { background: var(--dept-market); }
 .article-page .dept-row {
   text-align: center;
 }
@@ -837,19 +854,21 @@ footer {
   margin-bottom: 6px;
 }
 .archive-item .dept {
+  display: inline-block;
   font-family: var(--serif-display);
   font-size: 11px;
+  font-weight: 700;
   letter-spacing: 3px;
-  color: var(--accent);
-  padding: 2px 8px;
-  background: var(--accent-soft);
+  color: #fff;
+  padding: 3px 10px;
+  background: var(--accent);
 }
-.archive-item .dept.dept-정치 { color: var(--dept-politics); background: #F0F4FA; }
-.archive-item .dept.dept-경제 { color: var(--dept-economy); background: #FDF6F6; }
-.archive-item .dept.dept-사회 { color: var(--dept-society); background: #F0F6F4; }
-.archive-item .dept.dept-국제 { color: var(--dept-world); background: #FAF6F0; }
-.archive-item .dept.dept-시황 { color: var(--dept-market); background: #F5F5F5; }
-.archive-item .dept.dept-사설 { color: var(--accent); background: var(--accent-soft); }
+.archive-item .dept.dept-정치 { background: var(--dept-politics); }
+.archive-item .dept.dept-경제 { background: var(--dept-economy); }
+.archive-item .dept.dept-사회 { background: var(--dept-society); }
+.archive-item .dept.dept-국제 { background: var(--dept-world); }
+.archive-item .dept.dept-시황 { background: var(--dept-market); }
+.archive-item .dept.dept-사설 { background: var(--accent); }
 .archive-item .date {
   font-size: 11px;
   color: var(--ink-mute);
