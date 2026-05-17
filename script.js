@@ -13,6 +13,21 @@
 (function () {
 
   // ============================================================
+  // Google Analytics 4 — 자동 삽입 (모든 페이지에서 한 번만)
+  // ============================================================
+  const GA_ID = 'G-WHJER2HRM9';
+  if (location.protocol !== 'file:' && !window.__gaInjected) {
+    window.__gaInjected = true;
+    const s1 = document.createElement('script');
+    s1.async = true;
+    s1.src = 'https://www.googletagmanager.com/gtag/js?id=' + GA_ID;
+    document.head.appendChild(s1);
+    const s2 = document.createElement('script');
+    s2.textContent = "window.dataLayer = window.dataLayer || []; function gtag(){dataLayer.push(arguments);} gtag('js', new Date()); gtag('config', '" + GA_ID + "');";
+    document.head.appendChild(s2);
+  }
+
+  // ============================================================
   // 공유 버튼 자동 생성 — 모든 페이지에 우측 상단 떠 있음
   // PC 신문(file:///)에서도 진짜 인터넷 URL을 클립보드에 복사
   // ============================================================
@@ -148,7 +163,7 @@
       return `
         <a class="article-card-link" href="articles/${a.id}.html">
           ${thumb}
-          <p class="dept">${deptLabel(a.dept)}</p>
+          <p class="dept dept-${a.dept || ''}">${deptLabel(a.dept)}</p>
           <h3>${a.headline}</h3>
           <p class="summary">${a.summary || ''}</p>
           <p class="meta">${meta}</p>
@@ -324,7 +339,7 @@
           <div class="archive-item">
             <a href="${url}">
               <div class="row">
-                <span class="dept">${deptLabel(a.dept)}${a.kind === 'article' ? '부' : ''}</span>
+                <span class="dept dept-${a.dept || ''}">${deptLabel(a.dept)}${a.kind === 'article' ? '부' : ''}</span>
                 <span class="date">${metaRight}</span>
               </div>
               <h3>${a.headline}</h3>
