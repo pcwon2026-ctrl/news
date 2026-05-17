@@ -13,6 +13,81 @@
 (function () {
 
   // ============================================================
+  // 동영상 URL → 임베드 코드 변환 (유튜브/네이버TV/카카오TV/비메오/직접 mp4)
+  // ============================================================
+  function parseVideoUrl(url) {
+    if (!url) return null;
+    url = String(url).trim();
+
+    // YouTube — youtube.com/watch?v=ID 또는 youtu.be/ID 또는 shorts/ID
+    let m = url.match(/(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/)|youtu\.be\/)([A-Za-z0-9_-]+)/);
+    if (m) {
+      return {
+        type: 'youtube',
+        id: m[1],
+        embedUrl: `https://www.youtube.com/embed/${m[1]}`,
+        thumb: `https://img.youtube.com/vi/${m[1]}/hqdefault.jpg`
+      };
+    }
+
+    // Naver TV — tv.naver.com/v/숫자
+    m = url.match(/tv\.naver\.com\/v\/(\d+)/);
+    if (m) {
+      return {
+        type: 'navertv',
+        id: m[1],
+        embedUrl: `https://tv.naver.com/embed/${m[1]}?autoPlay=false`,
+        thumb: ''
+      };
+    }
+
+    // Kakao TV — tv.kakao.com/.../cliplink/숫자
+    m = url.match(/tv\.kakao\.com\/(?:channel\/\d+\/)?cliplink\/(\d+)/);
+    if (m) {
+      return {
+        type: 'kakaotv',
+        id: m[1],
+        embedUrl: `https://tv.kakao.com/embed/player/cliplink/${m[1]}?service=kakao_tv`,
+        thumb: ''
+      };
+    }
+
+    // Vimeo — vimeo.com/숫자
+    m = url.match(/vimeo\.com\/(\d+)/);
+    if (m) {
+      return {
+        type: 'vimeo',
+        id: m[1],
+        embedUrl: `https://player.vimeo.com/video/${m[1]}`,
+        thumb: ''
+      };
+    }
+
+    // MP4 직접 링크
+    if (/\.(mp4|webm|ogg)(\?|$)/i.test(url)) {
+      return { type: 'direct', id: '', embedUrl: url, thumb: '' };
+    }
+
+    return null;
+  }
+  window.parseVideoUrl = parseVideoUrl; // 다른 페이지에서도 쓰게 노출
+
+  function renderVideoEmbed(url, caption) {
+    const v = parseVideoUrl(url);
+    if (!v) return '';
+    let iframe;
+    if (v.type === 'direct') {
+      iframe = `<video controls src="${v.embedUrl}"></video>`;
+    } else {
+      iframe = `<iframe src="${v.embedUrl}" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`;
+    }
+    let html = `<div class="video-embed">${iframe}</div>`;
+    if (caption) html += `<p class="video-caption">${caption}</p>`;
+    return html;
+  }
+  window.renderVideoEmbed = renderVideoEmbed;
+
+  // ============================================================
   // Google Analytics 4 — 자동 삽입 (모든 페이지에서 한 번만)
   // ============================================================
   const GA_ID = 'G-WHJER2HRM9';
@@ -150,6 +225,18 @@
           if (cap) cap.textContent = lead.photoCaption || '';
         } else {
           photoBox.style.display = 'none';
+        }
+      }
+
+      // 동영상이 있으면 사진 아래에 추가 표시
+      const videoBox = $('[data-lead-video]');
+      if (videoBox) {
+        if (lead.video) {
+          videoBox.style.display = 'block';
+          videoBox.innerHTML = renderVideoEmbed(lead.video, lead.videoCaption);
+        } else {
+          videoBox.style.display = 'none';
+          videoBox.innerHTML = '';
         }
       }
 

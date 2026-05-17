@@ -290,7 +290,9 @@
       id: id, date: todayStr(), dept: DEPTS[0],
       reporterId: (DATA.reporters[0] || {}).id || '',
       headline: '', deck: '', summary: '', body: '',
-      photo: '', photoCaption: '', isLead: false
+      photo: '', photoCaption: '',
+      video: '', videoCaption: '',
+      isLead: false
     });
     CURRENT_ID = id;
     CURRENT_KIND = 'article';
@@ -333,6 +335,10 @@
       '<button class="btn small" data-clear-hidden="f-photo" data-clear-preview="f-photo-preview">✕ 제거</button></div>' +
       '<input type="hidden" id="f-photo" value="' + escAttr(a.photo || '') + '"></div></div>' +
       '<div class="field"><label>사진 캡션</label><input type="text" id="f-photoCaption" value="' + escAttr(a.photoCaption || '') + '"></div></div>' +
+      '<div class="row"><div class="field"><label>🎬 동영상 URL (유튜브 / 네이버TV / 카카오TV / 비메오)</label>' +
+      '<input type="text" id="f-video" value="' + escAttr(a.video || '') + '" placeholder="https://www.youtube.com/watch?v=...">' +
+      '<p class="hint">예: youtube.com/watch?v=abc123 또는 tv.naver.com/v/123456</p></div>' +
+      '<div class="field"><label>동영상 캡션 (선택)</label><input type="text" id="f-videoCaption" value="' + escAttr(a.videoCaption || '') + '"></div></div>' +
       '<div class="editor-actions"><div class="left"><button class="btn danger" onclick="deleteArticle(\'' + a.id + '\')">🗑 삭제</button></div>' +
       '<div class="right"><button class="btn" onclick="cancelEdit()">취소</button>' +
       '<button class="btn primary" onclick="applyArticle()">✓ 적용</button></div></div>';
@@ -361,6 +367,8 @@
     a.body = $('#f-body').value;
     a.photo = $('#f-photo').value;
     a.photoCaption = $('#f-photoCaption').value;
+    a.video = $('#f-video').value;
+    a.videoCaption = $('#f-videoCaption').value;
     if (a.isLead) {
       DATA.articles.forEach(function(x){
         if (x.id !== a.id && x.date === a.date && x.isLead) x.isLead = false;
