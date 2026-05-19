@@ -1,5 +1,5 @@
 // 한국정치경제신문 · 일간 데이터
-// 자동 생성: 2026-05-20 08:27:50
+// 자동 생성: 2026-05-20 08:32:38
 window.NEWSPAPER = {
   "reporters": [
     {
@@ -140,7 +140,7 @@ window.NEWSPAPER = {
       "photoCaption": "현대자 일봉 ",
       "video": "",
       "videoCaption": "",
-      "isLead": false
+      "isLead": true
     }
   ],
   "columns": [
