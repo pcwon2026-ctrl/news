@@ -107,6 +107,126 @@
     font-style: italic;
     line-height: 1.7;
   }
+
+  /* ============================================ */
+  /* 조 직 도 (Masthead — 신문 클래식 톤)            */
+  /* ============================================ */
+  .org-block {
+    max-width: 480px;
+    margin: 0 auto 28px;
+  }
+  .org-row {
+    display: flex;
+    justify-content: center;
+    align-items: baseline;
+    gap: 28px;
+    padding: 10px 0;
+    border-bottom: 0.5px dotted var(--hair);
+    font-family: var(--serif-display);
+  }
+  .org-row:last-child { border-bottom: none; }
+  .org-role {
+    font-size: 11px;
+    letter-spacing: 4px;
+    color: var(--ink-mute);
+    min-width: 110px;
+    text-align: right;
+  }
+  .org-name {
+    font-size: 17px;
+    font-weight: 700;
+    letter-spacing: 4px;
+    min-width: 160px;
+    text-align: left;
+  }
+  .org-name .note {
+    font-size: 11px;
+    font-weight: 400;
+    letter-spacing: 1px;
+    color: var(--ink-mute);
+    font-style: italic;
+    margin-left: 4px;
+  }
+  .org-vacant {
+    font-style: italic;
+    font-weight: 400;
+    color: var(--ink-mute);
+    font-size: 14px;
+    letter-spacing: 2px;
+  }
+
+  .org-divider {
+    font-family: var(--serif-display);
+    font-size: 13px;
+    letter-spacing: 8px;
+    color: var(--ink-mute);
+    text-align: center;
+    margin: 32px 0 22px;
+    position: relative;
+  }
+  .org-divider::before,
+  .org-divider::after {
+    content: '';
+    display: inline-block;
+    width: 40px;
+    height: 0.5px;
+    background: var(--hair);
+    vertical-align: middle;
+    margin: 0 14px;
+  }
+
+  .org-departments {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
+  .org-dept {
+    border: 0.5px solid var(--hair);
+    padding: 14px 16px;
+    background: var(--bg-soft);
+  }
+  .dept-name {
+    display: inline-block;
+    font-family: var(--serif-display);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 4px;
+    color: #fff;
+    padding: 4px 12px;
+    background: var(--accent);
+    margin-bottom: 12px;
+  }
+  .dept-name.dept-정치 { background: var(--dept-politics); }
+  .dept-name.dept-경제 { background: var(--dept-economy); }
+  .dept-name.dept-사회 { background: var(--dept-society); }
+  .dept-name.dept-국제 { background: var(--dept-world); }
+  .dept-name.dept-시황 { background: var(--dept-market); }
+
+  .dept-staff {
+    font-family: var(--serif-display);
+    font-size: 14px;
+  }
+  .dept-staff .staff-row {
+    padding: 4px 0;
+    display: flex;
+    gap: 12px;
+    align-items: baseline;
+    border-bottom: 0.5px dotted var(--hair-light);
+  }
+  .dept-staff .staff-row:last-child { border-bottom: none; }
+  .staff-role {
+    font-size: 11px;
+    letter-spacing: 2px;
+    color: var(--ink-mute);
+    min-width: 32px;
+  }
+
+  @media (max-width: 600px) {
+    .org-departments { grid-template-columns: 1fr; }
+    .org-row { gap: 16px; }
+    .org-role { min-width: 80px; letter-spacing: 3px; }
+    .org-name { min-width: 0; }
+  }
 </style>
 </head>
 <body>
@@ -150,6 +270,77 @@
     <section class="about-section">
       <h2>편 집 철 학</h2>
       <div data-publisher-philosophy></div>
+    </section>
+
+    <section class="about-section">
+      <h2>조 직</h2>
+
+      <!-- 경영진 -->
+      <div class="org-block">
+        <div class="org-row">
+          <span class="org-role">발 행 인</span>
+          <span class="org-name">박 창 원</span>
+        </div>
+        <div class="org-row">
+          <span class="org-role">사 장</span>
+          <span class="org-name">박 창 원 <span class="note">(겸직)</span></span>
+        </div>
+        <div class="org-row">
+          <span class="org-role">부 사 장</span>
+          <span class="org-name">박 용 순</span>
+        </div>
+        <div class="org-row">
+          <span class="org-role">편 집 위 원</span>
+          <span class="org-name org-vacant">준 비 중</span>
+        </div>
+      </div>
+
+      <div class="org-divider">부 서</div>
+
+      <!-- 부서 -->
+      <div class="org-departments">
+
+        <div class="org-dept">
+          <div class="dept-name dept-정치">정 치 부</div>
+          <div class="dept-staff">
+            <div class="staff-row"><span class="staff-role">부장</span><span class="org-vacant">준비 중</span></div>
+            <div class="staff-row"><span class="staff-role">기자</span>박 용 순</div>
+          </div>
+        </div>
+
+        <div class="org-dept">
+          <div class="dept-name dept-경제">경 제 부</div>
+          <div class="dept-staff">
+            <div class="staff-row"><span class="staff-role">부장</span><span class="org-vacant">준비 중</span></div>
+            <div class="staff-row"><span class="staff-role">기자</span><span class="org-vacant">준비 중</span></div>
+          </div>
+        </div>
+
+        <div class="org-dept">
+          <div class="dept-name dept-사회">사 회 부</div>
+          <div class="dept-staff">
+            <div class="staff-row"><span class="staff-role">부장</span><span class="org-vacant">준비 중</span></div>
+            <div class="staff-row"><span class="staff-role">기자</span><span class="org-vacant">준비 중</span></div>
+          </div>
+        </div>
+
+        <div class="org-dept">
+          <div class="dept-name dept-국제">국 제 부</div>
+          <div class="dept-staff">
+            <div class="staff-row"><span class="staff-role">부장</span><span class="org-vacant">준비 중</span></div>
+            <div class="staff-row"><span class="staff-role">기자</span><span class="org-vacant">준비 중</span></div>
+          </div>
+        </div>
+
+        <div class="org-dept">
+          <div class="dept-name dept-시황">시 황 · 증 권 부</div>
+          <div class="dept-staff">
+            <div class="staff-row"><span class="staff-role">부장</span><span class="org-vacant">준비 중</span></div>
+            <div class="staff-row"><span class="staff-role">기자</span><span class="org-vacant">준비 중</span></div>
+          </div>
+        </div>
+
+      </div>
     </section>
 
     <div class="about-meta">
