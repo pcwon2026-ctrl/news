@@ -1,5 +1,5 @@
 // 한국정치경제신문 · 일간 데이터
-// 자동 생성: 2026-05-20 14:12:15
+// 자동 생성: 2026-05-20 14:27:09
 window.NEWSPAPER = {
   "reporters": [
     {
@@ -202,22 +202,22 @@ window.NEWSPAPER = {
   "market": [
     {
       "name": "KOSPI",
-      "value": "7,126.42 ▼2.00%",
+      "value": "7,129.28 ▼1.96%",
       "dir": "down"
     },
     {
       "name": "KOSDAQ",
-      "value": "1,049.37 ▼3.23%",
+      "value": "1,049.39 ▼3.22%",
       "dir": "down"
     },
     {
       "name": "KOSPI200",
-      "value": "1,111.05 ▼1.89%",
+      "value": "1,111.82 ▼1.82%",
       "dir": "down"
     },
     {
       "name": "USD/KRW",
-      "value": "1,510.54 ▲0.25%",
+      "value": "1,510.34 ▲0.24%",
       "dir": "up"
     },
     {
