@@ -20,21 +20,22 @@ import json
 import time
 import subprocess
 from datetime import datetime
-from kiwoom_connector import KiwoomAPI
-from overseas_indices import collect_overseas
+from overseas_indices import collect_overseas, fetch_yahoo
 
 
 # ============================================================
 # 설정
 # ============================================================
+# 이 파일이 들어있는 폴더를 신문 폴더로 자동 인식
 NEWSPAPER_FOLDER = os.path.dirname(os.path.abspath(__file__))
 OUTPUT_FILE = os.path.join(NEWSPAPER_FOLDER, "data.js")
 ARTICLES_FILE = os.path.join(NEWSPAPER_FOLDER, "articles.json")
 
+# 국내 지수 — 키움 대신 Yahoo Finance에서 받아옴 (로그인 불필요)
 INDEX_LIST = [
-    {"code": "001", "name": "KOSPI"},
-    {"code": "101", "name": "KOSDAQ"},
-    {"code": "201", "name": "KOSPI200"},
+    {"code": "^KS11",  "name": "KOSPI"},
+    {"code": "^KQ11",  "name": "KOSDAQ"},
+    {"code": "^KS200", "name": "KOSPI200"},
 ]
 
 
@@ -63,16 +64,14 @@ def load_articles():
 # ============================================================
 def collect_indices():
     print("=" * 60)
-    print("[1/3] 키움 지수 수집")
+    print("[1/3] 국내 지수 수집 (Yahoo Finance)")
     print("=" * 60)
-    kw = KiwoomAPI()
-    kw.login()
 
     results = {}
     for idx in INDEX_LIST:
         code, name = idx["code"], idx["name"]
         print(f"   {name} ({code}) 조회 중...", end=" ")
-        data = kw.get_index_price(code)
+        data = fetch_yahoo(code)
         if data and data["price"] > 0:
             results[name] = data
             arrow = "▲" if data["change_rate"] > 0 else ("▼" if data["change_rate"] < 0 else "-")
@@ -158,7 +157,7 @@ def save_file(text):
 # ============================================================
 # 기사별 HTML 자동 생성 (카톡 미리보기용 OG 메타태그 포함)
 # ============================================================
-SITE_URL = "https://pcwon2026-ctrl.github.io/news"
+SITE_URL = "https://www.kpen.kr"
 ARTICLES_DIR = os.path.join(NEWSPAPER_FOLDER, "articles")
 PUBLISHER_FILE = os.path.join(NEWSPAPER_FOLDER, "publisher.json")
 
@@ -700,6 +699,64 @@ def extract_all_base64_photos(articles_data):
 
 
 # ============================================================
+# 1면 index.html 카톡 미리보기 사진(og:image) 자동 갱신
+# ============================================================
+import re
+
+INDEX_HTML_FILE = os.path.join(NEWSPAPER_FOLDER, "index.html")
+
+
+def update_index_og_image(articles_data):
+    """1면 index.html의 og:image를 가장 최근 사진 있는 기사로 갱신."""
+    print("\n" + "=" * 60)
+    print("[3.4/4] 1면 카톡 미리보기 사진(og:image) 갱신")
+    print("=" * 60)
+
+    if not os.path.exists(INDEX_HTML_FILE):
+        print(f"[X] index.html 없음: {INDEX_HTML_FILE}")
+        return
+
+    candidates = []
+    for a in articles_data.get("articles", []):
+        if a.get("photoFile"):
+            candidates.append((a, a["photoFile"]))
+        elif a.get("photo") and not a.get("photo", "").startswith("data:"):
+            candidates.append((a, a["photo"]))
+
+    if not candidates:
+        print("[!] 사진 있는 기사가 없음. 건너뜀.")
+        return
+
+    candidates.sort(key=lambda x: x[0].get("date", ""), reverse=True)
+    top, photo_path = candidates[0]
+    og_image_url = photo_path if photo_path.startswith("http") else f"{SITE_URL}/{photo_path.lstrip('/')}"
+    print(f"   톱기사: [{top.get('dept','?')}] {top.get('headline','')[:50]}")
+    print(f"   og:image: {og_image_url}")
+
+    with open(INDEX_HTML_FILE, "r", encoding="utf-8") as f:
+        html = f.read()
+
+    new_og = f'<meta property="og:image" content="{og_image_url}">'
+    new_tw = f'<meta name="twitter:image" content="{og_image_url}">'
+
+    pat = re.compile(r'<meta\s+property=["\']og:image["\'][^>]*?>')
+    if pat.search(html):
+        html = pat.sub(new_og, html)
+    else:
+        html = re.sub(r'(<meta\s+property=["\']og:url["\'][^>]*?>)', r'\1\n' + new_og, html, count=1)
+
+    pat = re.compile(r'<meta\s+name=["\']twitter:image["\'][^>]*?>')
+    if pat.search(html):
+        html = pat.sub(new_tw, html)
+    else:
+        html = re.sub(r'(<meta\s+name=["\']twitter:card["\'][^>]*?>)', r'\1\n' + new_tw, html, count=1)
+
+    with open(INDEX_HTML_FILE, "w", encoding="utf-8") as f:
+        f.write(html)
+    print("[OK] index.html 갱신 완료")
+
+
+# ============================================================
 # GitHub 업로드
 # ============================================================
 def upload_to_github():
@@ -755,6 +812,7 @@ if __name__ == "__main__":
     js_text = build_data(articles_data, indices, overseas)
     if save_file(js_text):
         extract_all_base64_photos(articles_data)
+        update_index_og_image(articles_data)
         generate_article_pages(articles_data)
         generate_column_pages(articles_data)
         print("\n[OK] 신문 데이터 갱신 완료")
