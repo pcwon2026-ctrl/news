@@ -767,23 +767,32 @@ def upload_to_github():
         print(f"[X] 신문 폴더 없음")
         return False
     try:
-        subprocess.run(["git", "add", "."], cwd=NEWSPAPER_FOLDER, check=True)
-        result = subprocess.run(
-            ["git", "commit", "-m", "Daily update"],
-            cwd=NEWSPAPER_FOLDER,
-            capture_output=True, text=True
-        )
-        push_result = subprocess.run(
-            ["git", "push"], cwd=NEWSPAPER_FOLDER,
-            capture_output=True, text=True, encoding="utf-8", errors="replace"
-        )
+        def git(*args):
+            return subprocess.run(
+                ["git", *args], cwd=NEWSPAPER_FOLDER,
+                capture_output=True, text=True, encoding="utf-8", errors="replace"
+            )
+
+        git("add", ".")
+        git("commit", "-m", "Daily update")
+
+        # GitHub 쪽에 먼저 생긴 변경(예: 도메인 설정 CNAME)을 받아와 합침.
+        # 충돌이 나면 컴퓨터 쪽 내용을 우선함.
+        print("   GitHub 변경 사항 받아오는 중...")
+        pull = git("pull", "--rebase", "--autostash", "-X", "theirs", "origin", "main")
+        if pull.returncode != 0:
+            print("[!] 받아오기 실패 — 그래도 업로드 시도")
+            print((pull.stderr or pull.stdout).strip()[-800:])
+            git("rebase", "--abort")
+
+        push_result = git("push", "origin", "main")
         if push_result.returncode == 0:
             print("[OK] GitHub 업로드 완료")
-            print("  URL: https://pcwon2026-ctrl.github.io/news/")
+            print("  URL: https://www.kpen.kr/")
             return True
         else:
-            print("[X] GitHub 업로드 실패")
-            print(push_result.stderr or push_result.stdout)
+            print("[X] GitHub 업로드 실패 — 아래 메시지를 캡처해서 보내주세요")
+            print((push_result.stderr or push_result.stdout).strip()[-1200:])
             return False
     except FileNotFoundError:
         print("[X] git 명령어를 찾을 수 없음")
