@@ -827,10 +827,14 @@ footer {
 }
 .article-card-link .thumb {
   width: 100%;
-  height: 180px;
-  object-fit: cover;
+  height: auto;          /* 사진 비율 그대로 — 잘리지 않음 */
+  max-height: 420px;     /* 너무 긴 사진만 상한 */
+  object-fit: contain;
+  object-position: center top;
+  display: block;
   margin-bottom: 12px;
   border: 0.5px solid var(--hair);
+  background: var(--bg-soft);
 }
 
 /* ============================================ */
