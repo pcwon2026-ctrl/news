@@ -20,6 +20,7 @@ import json
 import time
 import subprocess
 from datetime import datetime
+from urllib.parse import quote as _urlquote
 from overseas_indices import collect_overseas, fetch_yahoo
 
 
@@ -258,6 +259,109 @@ def build_video_embed(url, caption=""):
     return html
 
 
+# ============================================================
+# SEO 도우미 — 태그 · 키워드 · 사진 alt · 파일명
+# ============================================================
+import re as _re
+
+ARCHIVE_URL = f"{SITE_URL}/archive.html"
+
+
+def parse_tags(raw):
+    """'#젠슨황 #트럼프, 엔비디아' → ['젠슨황', '트럼프', '엔비디아'] (중복 제거, 순서 유지)."""
+    if not raw:
+        return []
+    if isinstance(raw, list):
+        parts = raw
+    else:
+        parts = _re.split(r"[#,\s]+", str(raw))
+    seen, out = set(), []
+    for p in parts:
+        p = p.strip().strip("#").strip()
+        if p and p not in seen:
+            seen.add(p)
+            out.append(p)
+    return out
+
+
+def keyword_slug(text, limit=40):
+    """사진 파일명에 넣을 키워드 조각. 한글·영문·숫자만 남기고 공백은 '-'."""
+    if not text:
+        return ""
+    s = _re.sub(r"[^\w가-힣]+", "-", str(text), flags=_re.UNICODE)
+    s = _re.sub(r"-{2,}", "-", s).strip("-_")
+    return s[:limit].rstrip("-_")
+
+
+def build_keywords(base, tags, extra=""):
+    """<meta name="keywords"> 내용. base 리스트 + 태그 + 추가 문자열, 중복 제거."""
+    items = []
+    for k in list(base) + list(tags) + ([extra] if extra else []):
+        k = str(k).strip()
+        if k and k not in items:
+            items.append(k)
+    return ", ".join(items)
+
+
+def render_tags_block(tags, label="태그"):
+    """기사 하단 태그란 HTML. 태그 클릭 → 아카이브 검색."""
+    if not tags:
+        return ""
+    links = "\n".join(
+        f'      <a class="tag" href="{ARCHIVE_URL}?tag={html_escape(t)}" rel="tag">#{html_escape(t)}</a>'
+        for t in tags
+    )
+    return f'''<div class="article-tags" aria-label="{label}">
+      <span class="tags-label">{label}</span>
+{links}
+    </div>'''
+
+
+def render_tag_meta(tags):
+    """포털·SNS가 읽는 article:tag 메타 태그."""
+    return "\n".join(f'<meta property="article:tag" content="{html_escape(t)}">' for t in tags)
+
+
+def render_jsonld(kind, headline, description, url, image, date, author, tags, section=""):
+    """구글 뉴스·네이버가 읽는 NewsArticle 구조화 데이터."""
+    data = {
+        "@context": "https://schema.org",
+        "@type": "NewsArticle" if kind == "article" else "OpinionNewsArticle",
+        "headline": headline,
+        "description": description,
+        "mainEntityOfPage": url,
+        "url": url,
+        "datePublished": date,
+        "dateModified": date,
+        "inLanguage": "ko",
+        "author": {"@type": "Person", "name": author or "박창원"},
+        "publisher": {
+            "@type": "NewsMediaOrganization",
+            "name": "한국정치경제신문",
+            "url": SITE_URL,
+        },
+    }
+    if image:
+        data["image"] = [image]
+    if tags:
+        data["keywords"] = ", ".join(tags)
+    if section:
+        data["articleSection"] = section
+    return ('<script type="application/ld+json">'
+            + json.dumps(data, ensure_ascii=False)
+            + "</script>")
+
+
+def photo_alt_text(caption, headline, tags):
+    """사진 alt — 캡션이 있으면 캡션, 없으면 헤드라인 + 태그 앞 3개."""
+    if caption:
+        return caption
+    core = headline or ""
+    if tags:
+        core = f"{core} — {' '.join(tags[:3])}" if core else " ".join(tags[:3])
+    return core
+
+
 def render_article_page(article, reporter, opinion):
     """기사 한 개의 정적 HTML 페이지 텍스트 반환."""
     headline = html_escape(article.get("headline", ""))
@@ -266,28 +370,32 @@ def render_article_page(article, reporter, opinion):
     dept = article.get("dept", "")
     date = article.get("date", "")
     photo = article.get("photo", "")
-    photo_caption = html_escape(article.get("photoCaption", ""))
+    photo_caption_raw = article.get("photoCaption", "")
+    photo_caption = html_escape(photo_caption_raw)
+    tags = parse_tags(article.get("tags", ""))
     reporter_str = ""
+    reporter_name = ""
     if reporter:
-        reporter_str = f"{reporter.get('dept','')}부 {reporter.get('name','')} 기자"
+        reporter_name = reporter.get("name", "")
+        reporter_str = f"{reporter.get('dept','')}부 {reporter_name} 기자"
 
     # 본문 paragraph 처리
     body_text = article.get("body", "")
     paragraphs = [p.strip() for p in body_text.split("\n\n") if p.strip()]
     body_html = "\n".join(f"      <p>{html_escape(p)}</p>" for p in paragraphs)
 
-    # 사진 블록 — Base64(data:image)면 그대로, 일반 경로면 ../ 붙임
-    if photo:
-        if photo.startswith("data:"):
-            img_src = photo
-        elif photo.startswith("http"):
-            img_src = photo
+    # 사진 블록 — 추출된 파일(키워드 파일명) 우선, 없으면 원본 경로
+    photo_src_path = article.get("photoFile") or photo
+    photo_alt = html_escape(photo_alt_text(photo_caption_raw, article.get("headline", ""), tags))
+    if photo_src_path:
+        if photo_src_path.startswith("data:") or photo_src_path.startswith("http"):
+            img_src = photo_src_path
         else:
-            img_src = f"../{photo}"
-        photo_html = f'''<div class="photo">
-        <img src="{img_src}" alt="">
-        <p class="caption">{photo_caption}</p>
-      </div>'''
+            img_src = f"../{_urlquote(photo_src_path)}"
+        photo_html = f'''<figure class="photo">
+        <img src="{img_src}" alt="{photo_alt}" title="{photo_alt}" loading="lazy">
+        <figcaption class="caption">{photo_caption}</figcaption>
+      </figure>'''
     else:
         photo_html = ""
 
@@ -299,7 +407,7 @@ def render_article_page(article, reporter, opinion):
     # OG 이미지 URL — photoFile(추출된 파일) 우선
     photo_for_og = article.get("photoFile") or (photo if photo and not photo.startswith("data:") else "")
     if photo_for_og:
-        og_image = photo_for_og if photo_for_og.startswith("http") else f"{SITE_URL}/{photo_for_og}"
+        og_image = photo_for_og if photo_for_og.startswith("http") else f"{SITE_URL}/{_urlquote(photo_for_og)}"
     else:
         og_image = ""
 
@@ -322,8 +430,19 @@ def render_article_page(article, reporter, opinion):
     ]
     if og_image:
         twitter_tags.append(f'<meta name="twitter:image" content="{og_image}">')
+        og_tags.append(f'<meta property="og:image:alt" content="{photo_alt}">')
+    og_tags.append(f'<meta property="article:published_time" content="{date}">')
+    og_tags.append(f'<meta property="article:section" content="{dept}">')
 
-    meta_html = "\n".join(og_tags + twitter_tags)
+    page_url = f"{SITE_URL}/articles/{article['id']}.html"
+    meta_html = "\n".join(og_tags + twitter_tags + [render_tag_meta(tags)])
+    keywords = build_keywords(
+        ["한국정치경제신문", dept, article.get("headline", ""), "박창원", "종합일간지"],
+        tags, article.get("photoCaption", ""))
+    jsonld = render_jsonld("article", article.get("headline", ""),
+                           article.get("summary") or article.get("deck", ""),
+                           page_url, og_image, date, reporter_name, tags, section=dept)
+    tags_html = render_tags_block(tags)
 
     return f"""<!DOCTYPE html>
 <html lang="ko">
@@ -332,11 +451,14 @@ def render_article_page(article, reporter, opinion):
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>{headline} · 한국정치경제신문</title>
 <meta name="description" content="{summary or deck}">
-<meta name="keywords" content="한국정치경제신문, {dept}, {headline}, 박창원, 종합일간지">
+<meta name="keywords" content="{html_escape(keywords)}">
+<meta name="news_keywords" content="{html_escape(', '.join(tags))}">
 <meta name="author" content="한국정치경제신문 · 박창원">
-<meta name="robots" content="index, follow">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<link rel="canonical" href="{page_url}">
 
 {meta_html}
+{jsonld}
 
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-WHJER2HRM9"></script>
 <script>
@@ -395,6 +517,7 @@ gtag('config', 'G-WHJER2HRM9');
     <div class="body">
 {body_html}
     </div>
+    {tags_html}
     <a class="back-link" href="../index.html">← 1면으로</a>
   </article>
 
@@ -452,7 +575,9 @@ def render_column_page(col):
     label = html_escape(col.get("label", "사 설"))
     date = col.get("date", "")
     photo = col.get("photo", "")
-    photo_caption = html_escape(col.get("photoCaption", ""))
+    photo_caption_raw = col.get("photoCaption", "")
+    photo_caption = html_escape(photo_caption_raw)
+    tags = parse_tags(col.get("tags", ""))
     author_name = html_escape(col.get("authorName", ""))
     author_title = html_escape(col.get("authorTitle", ""))
     author_photo = col.get("authorPhoto", "")
@@ -466,16 +591,18 @@ def render_column_page(col):
     # 첫 문단 발췌 (미리보기용)
     excerpt = paragraphs[0][:120] if paragraphs else ""
 
-    # 칼럼 사진 블록
-    if photo:
-        if photo.startswith("data:") or photo.startswith("http"):
-            img_src = photo
+    # 칼럼 사진 블록 — 추출된 파일(키워드 파일명) 우선
+    photo_src_path = col.get("photoFile") or photo
+    photo_alt = html_escape(photo_alt_text(photo_caption_raw, col.get("headline", ""), tags))
+    if photo_src_path:
+        if photo_src_path.startswith("data:") or photo_src_path.startswith("http"):
+            img_src = photo_src_path
         else:
-            img_src = f"../{photo}"
-        photo_html = f'''<div class="column-photo">
-        <img src="{img_src}" alt="">
-        <p class="caption">{photo_caption}</p>
-      </div>'''
+            img_src = f"../{_urlquote(photo_src_path)}"
+        photo_html = f'''<figure class="column-photo">
+        <img src="{img_src}" alt="{photo_alt}" title="{photo_alt}" loading="lazy">
+        <figcaption class="caption">{photo_caption}</figcaption>
+      </figure>'''
     else:
         photo_html = ""
 
@@ -486,7 +613,7 @@ def render_column_page(col):
                 ap_src = author_photo
             else:
                 ap_src = f"../{author_photo}"
-            author_img = f'<img class="author-photo" src="{ap_src}" alt="">'
+            author_img = f'<img class="author-photo" src="{ap_src}" alt="{author_name} {author_title}" loading="lazy">'
         else:
             author_img = ''
         author_html = f'''<div class="author-row" style="display:flex">
@@ -507,7 +634,7 @@ def render_column_page(col):
         # 칼럼 사진 없으면 필자 사진 사용
         photo_for_og = col.get("authorPhotoFile") or ""
     if photo_for_og:
-        og_image = photo_for_og if photo_for_og.startswith("http") else f"{SITE_URL}/{photo_for_og}"
+        og_image = photo_for_og if photo_for_og.startswith("http") else f"{SITE_URL}/{_urlquote(photo_for_og)}"
     else:
         og_image = ""
 
@@ -528,8 +655,18 @@ def render_column_page(col):
     ]
     if og_image:
         twitter_tags.append(f'<meta name="twitter:image" content="{og_image}">')
+        og_tags.append(f'<meta property="og:image:alt" content="{photo_alt}">')
+    og_tags.append(f'<meta property="article:published_time" content="{date}">')
+    og_tags.append(f'<meta property="article:section" content="사설">')
 
-    meta_html = "\n".join(og_tags + twitter_tags)
+    page_url = f"{SITE_URL}/column/{col['id']}.html"
+    meta_html = "\n".join(og_tags + twitter_tags + [render_tag_meta(tags)])
+    keywords = build_keywords(
+        ["한국정치경제신문", "사설", "칼럼", col.get("headline", ""), col.get("authorName", ""), "박창원"],
+        tags, col.get("photoCaption", ""))
+    jsonld = render_jsonld("column", col.get("headline", ""), excerpt, page_url, og_image,
+                           date, col.get("authorName", ""), tags, section="사설")
+    tags_html = render_tags_block(tags)
 
     return f"""<!DOCTYPE html>
 <html lang="ko">
@@ -538,11 +675,14 @@ def render_column_page(col):
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>{headline} · 한국정치경제신문</title>
 <meta name="description" content="{html_escape(excerpt)}">
-<meta name="keywords" content="한국정치경제신문, 사설, 칼럼, {author_name}, 박창원">
+<meta name="keywords" content="{html_escape(keywords)}">
+<meta name="news_keywords" content="{html_escape(', '.join(tags))}">
 <meta name="author" content="한국정치경제신문">
-<meta name="robots" content="index, follow">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<link rel="canonical" href="{page_url}">
 
 {meta_html}
+{jsonld}
 
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-WHJER2HRM9"></script>
 <script>
@@ -596,6 +736,7 @@ gtag('config', 'G-WHJER2HRM9');
 {body_html}
     </div>
     {author_html}
+    {tags_html}
     <p style="text-align:center;margin-top:40px;padding-top:20px;border-top:0.5px solid var(--hair);font-size:13px;color:var(--ink-mute)">
       <a href="../index.html" style="color:inherit;text-decoration:none;letter-spacing:2px">← 1면으로</a>
     </p>
@@ -647,8 +788,20 @@ import base64
 AUTO_IMAGES_DIR = os.path.join(NEWSPAPER_FOLDER, "images", "auto")
 
 
-def extract_base64_photo(data_url, file_id):
-    """Base64 사진을 실제 파일로 저장하고 경로 반환."""
+def seo_photo_name(item, file_id, suffix=""):
+    """사진 파일명에 키워드를 넣는다 (검색엔진 이미지 색인용).
+    우선순위: 사진 캡션 → 태그 앞 3개 → 헤드라인.
+    예) a20261116001_젠슨-황-앨리스-황-엔비디아-AI-칩-중국-유출.jpg
+    """
+    tags = parse_tags(item.get("tags", ""))
+    src = item.get("photoCaption", "") or " ".join(tags[:3]) or item.get("headline", "")
+    slug = keyword_slug(src)
+    name = f"{file_id}{suffix}"
+    return f"{name}_{slug}" if slug else name
+
+
+def extract_base64_photo(data_url, file_id, item=None, suffix=""):
+    """Base64 사진을 실제 파일로 저장하고 경로 반환. item 이 있으면 키워드 파일명."""
     if not data_url or not data_url.startswith("data:"):
         return ""
     try:
@@ -660,10 +813,19 @@ def extract_base64_photo(data_url, file_id):
         else:
             ext = "jpg"
         os.makedirs(AUTO_IMAGES_DIR, exist_ok=True)
-        out_path = os.path.join(AUTO_IMAGES_DIR, f"{file_id}.{ext}")
+        base = seo_photo_name(item, file_id, suffix) if item else f"{file_id}{suffix}"
+        out_path = os.path.join(AUTO_IMAGES_DIR, f"{base}.{ext}")
         with open(out_path, "wb") as f:
             f.write(base64.b64decode(b64data))
-        return f"images/auto/{file_id}.{ext}"
+        # 예전 이름(키워드 없는 파일)이 남아 있으면 정리
+        for old_ext in ("jpg", "png", "webp"):
+            old = os.path.join(AUTO_IMAGES_DIR, f"{file_id}{suffix}.{old_ext}")
+            if base != f"{file_id}{suffix}" and os.path.exists(old):
+                try:
+                    os.remove(old)
+                except OSError:
+                    pass
+        return f"images/auto/{base}.{ext}"
     except Exception as e:
         print(f"   [!] Base64 추출 실패 ({file_id}): {e}")
         return ""
@@ -678,19 +840,19 @@ def extract_all_base64_photos(articles_data):
     count = 0
     for art in articles_data.get("articles", []):
         if art.get("photo", "").startswith("data:"):
-            path = extract_base64_photo(art["photo"], art["id"])
+            path = extract_base64_photo(art["photo"], art["id"], item=art)
             if path:
                 art["photoFile"] = path
                 count += 1
 
     for col in articles_data.get("columns", []):
         if col.get("photo", "").startswith("data:"):
-            path = extract_base64_photo(col["photo"], col["id"])
+            path = extract_base64_photo(col["photo"], col["id"], item=col)
             if path:
                 col["photoFile"] = path
                 count += 1
         if col.get("authorPhoto", "").startswith("data:"):
-            path = extract_base64_photo(col["authorPhoto"], col["id"] + "_author")
+            path = extract_base64_photo(col["authorPhoto"], col["id"], suffix="_author")
             if path:
                 col["authorPhotoFile"] = path
                 count += 1
@@ -729,7 +891,7 @@ def update_index_og_image(articles_data):
 
     candidates.sort(key=lambda x: x[0].get("date", ""), reverse=True)
     top, photo_path = candidates[0]
-    og_image_url = photo_path if photo_path.startswith("http") else f"{SITE_URL}/{photo_path.lstrip('/')}"
+    og_image_url = photo_path if photo_path.startswith("http") else f"{SITE_URL}/{_urlquote(photo_path.lstrip('/'))}"
     print(f"   톱기사: [{top.get('dept','?')}] {top.get('headline','')[:50]}")
     print(f"   og:image: {og_image_url}")
 

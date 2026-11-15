@@ -221,7 +221,7 @@
           photoBox.style.display = 'block';
           const img = photoBox.querySelector('img');
           const cap = photoBox.querySelector('.caption');
-          if (img) img.src = lead.photo;
+          if (img) { img.src = lead.photo; img.alt = lead.photoCaption || lead.headline || ''; }
           if (cap) cap.textContent = lead.photoCaption || '';
         } else {
           photoBox.style.display = 'none';
@@ -249,10 +249,11 @@
     }
 
     // ---- 기사 카드 목록 ----
+    const esc = s => String(s || '').replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
     const cardsHtml = others.map(a => {
       const r = reporterById(a.reporterId);
       const meta = r ? `${r.dept}부 / ${r.name}` : '';
-      const thumb = a.photo ? `<img class="thumb" src="${a.photo}" alt="">` : '';
+      const thumb = a.photo ? `<img class="thumb" src="${a.photo}" alt="${esc(a.photoCaption || a.headline || '')}" loading="lazy">` : '';
       return `
         <a class="article-card-link" href="articles/${a.id}.html">
           ${thumb}
@@ -298,7 +299,7 @@
           opPhoto.style.display = 'block';
           const img = opPhoto.querySelector('img');
           const cap = opPhoto.querySelector('.caption');
-          if (img) img.src = op.photo;
+          if (img) { img.src = op.photo; img.alt = op.photoCaption || op.headline || ''; }
           if (cap) cap.textContent = op.photoCaption || '';
         } else {
           opPhoto.style.display = 'none';
@@ -366,7 +367,7 @@
         photoBox.style.display = 'block';
         const img = photoBox.querySelector('img');
         const cap = photoBox.querySelector('.caption');
-        if (img) img.src = a.photo;
+        if (img) { img.src = a.photo; img.alt = a.photoCaption || a.headline || ''; }
         if (cap) cap.textContent = a.photoCaption || '';
       } else {
         photoBox.style.display = 'none';
@@ -390,7 +391,8 @@
       dept: a.dept,
       headline: a.headline,
       summary: a.summary,
-      reporterId: a.reporterId
+      reporterId: a.reporterId,
+      tags: a.tags || ''
     }));
     const columns = (D.columns || []).map(c => ({
       kind: 'column',
@@ -399,7 +401,8 @@
       dept: '사설',
       headline: c.headline,
       summary: (c.body || '').split('\n\n')[0].slice(0, 80) + '...',
-      authorName: c.authorName
+      authorName: c.authorName,
+      tags: c.tags || ''
     }));
     const all = [...articles, ...columns].sort((a, b) =>
       b.date.localeCompare(a.date) || b.id.localeCompare(a.id)
@@ -414,9 +417,19 @@
       ).join('');
     }
 
+    // 태그 검색 (archive.html?tag=젠슨황 — 기사 하단 태그 클릭 시)
+    const tagParam = (new URLSearchParams(location.search).get('tag') || '').trim();
+    const hasTag = (a, t) => String(a.tags || '').split(/[#,\s]+/).map(x => x.trim()).includes(t);
+    const tagNotice = $('[data-archive-filters]');
+    if (tagParam && tagNotice) {
+      tagNotice.insertAdjacentHTML('afterend',
+        `<p class="archive-tag-notice">#${tagParam} 태그 기사 · <a href="archive.html">전체 보기</a></p>`);
+    }
+
     // 기사 목록
     function showList(filter) {
-      const filtered = filter === '전체' ? all : all.filter(a => a.dept === filter);
+      let filtered = filter === '전체' ? all : all.filter(a => a.dept === filter);
+      if (tagParam) filtered = filtered.filter(a => hasTag(a, tagParam));
       const itemsHtml = filtered.map(a => {
         let metaRight = '';
         if (a.kind === 'article') {

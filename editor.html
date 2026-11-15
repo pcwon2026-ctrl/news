@@ -339,6 +339,9 @@
       '<input type="text" id="f-video" value="' + escAttr(a.video || '') + '" placeholder="https://www.youtube.com/watch?v=...">' +
       '<p class="hint">예: youtube.com/watch?v=abc123 또는 tv.naver.com/v/123456</p></div>' +
       '<div class="field"><label>동영상 캡션 (선택)</label><input type="text" id="f-videoCaption" value="' + escAttr(a.videoCaption || '') + '"></div></div>' +
+      '<div class="field"><label>🔖 태그 (SEO · 포털 연관검색어)</label>' +
+      '<input type="text" id="f-tags" value="' + escAttr(a.tags || '') + '" placeholder="#젠슨황 #트럼프 #엔비디아 #AI반도체">' +
+      '<p class="hint">#으로 구분. 기사 하단 태그란 + 검색엔진 키워드 + 사진 파일명에 자동 반영됩니다</p></div>' +
       '<div class="editor-actions"><div class="left"><button class="btn danger" onclick="deleteArticle(\'' + a.id + '\')">🗑 삭제</button></div>' +
       '<div class="right"><button class="btn" onclick="cancelEdit()">취소</button>' +
       '<button class="btn primary" onclick="applyArticle()">✓ 적용</button></div></div>';
@@ -369,6 +372,7 @@
     a.photoCaption = $('#f-photoCaption').value;
     a.video = $('#f-video').value;
     a.videoCaption = $('#f-videoCaption').value;
+    a.tags = $('#f-tags').value;
     if (a.isLead) {
       DATA.articles.forEach(function(x){
         if (x.id !== a.id && x.date === a.date && x.isLead) x.isLead = false;
@@ -440,6 +444,9 @@
       '<input id="c-author-file" type="file" accept="image/*" style="display:none" data-target-hidden="c-authorPhoto" data-target-preview="c-author-preview">' +
       '<button class="btn small" data-clear-hidden="c-authorPhoto" data-clear-preview="c-author-preview">✕ 제거</button></div>' +
       '<input type="hidden" id="c-authorPhoto" value="' + escAttr(c.authorPhoto || '') + '"></div></div>' +
+      '<div class="field"><label>🔖 태그 (SEO · 포털 연관검색어)</label>' +
+      '<input type="text" id="c-tags" value="' + escAttr(c.tags || '') + '" placeholder="#사설 #정치 #사법부독립">' +
+      '<p class="hint">#으로 구분. 사설 하단 태그란 + 검색엔진 키워드 + 사진 파일명에 자동 반영됩니다</p></div>' +
       '<div class="editor-actions"><div class="left"><button class="btn danger" onclick="deleteColumn(\'' + c.id + '\')">🗑 삭제</button></div>' +
       '<div class="right"><button class="btn" onclick="cancelEdit()">취소</button>' +
       '<button class="btn primary" onclick="applyColumn()">✓ 사설 적용</button></div></div>';
@@ -470,6 +477,7 @@
     c.authorName = $('#c-authorName').value;
     c.authorTitle = $('#c-authorTitle').value;
     c.authorPhoto = $('#c-authorPhoto').value;
+    c.tags = $('#c-tags').value;
     DIRTY = true;
     renderColumnList();
     updateMeta();

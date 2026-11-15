@@ -1027,3 +1027,50 @@ footer {
   .main-grid { grid-template-columns: 1fr; gap: 24px; }
   .opinion .column-photo { width: 140px; margin: 0 0 10px 12px; }
 }
+
+/* ============================================================
+   기사 하단 태그란 (SEO · 포털 연관검색어)
+   ============================================================ */
+.article-tags {
+  margin: 36px 0 8px;
+  padding-top: 16px;
+  border-top: 0.5px dotted var(--hair);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 10px;
+  font-family: var(--serif-display);
+}
+.article-tags .tags-label {
+  font-size: 11px;
+  letter-spacing: 3px;
+  color: var(--ink-mute);
+  margin-right: 4px;
+}
+.article-tags .tag {
+  display: inline-block;
+  font-size: 12.5px;
+  letter-spacing: 0.5px;
+  color: var(--accent);
+  text-decoration: none;
+  padding: 3px 10px;
+  border: 0.5px solid var(--hair);
+  background: var(--bg-soft);
+  border-radius: 2px;
+  transition: background .15s, color .15s;
+}
+.article-tags .tag:hover {
+  background: var(--accent);
+  color: #fff;
+  border-color: var(--accent);
+}
+figure.photo, figure.column-photo { margin-left: 0; margin-right: 0; }
+.opinion .article-tags { margin-top: 28px; }
+.archive-tag-notice {
+  text-align: center;
+  font-family: var(--serif-display);
+  font-size: 13px;
+  color: var(--accent);
+  margin: 10px 0 20px;
+}
+.archive-tag-notice a { color: var(--ink-mute); text-decoration: none; margin-left: 6px; }
