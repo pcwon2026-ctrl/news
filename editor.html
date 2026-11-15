@@ -73,6 +73,27 @@
     .sidebar { position: static; max-height: none; }
     .row { grid-template-columns: 1fr; }
   }
+
+  /* ── 무료 사진 검색 모달 ── */
+  .stock-overlay { position: fixed; inset: 0; background: rgba(20,18,14,.55); z-index: 100; display: none; align-items: center; justify-content: center; }
+  .stock-overlay.open { display: flex; }
+  .stock-modal { background: var(--bg); width: min(960px, 94vw); max-height: 90vh; border: 1px solid var(--ink); border-radius: 6px; display: flex; flex-direction: column; box-shadow: 0 20px 60px rgba(0,0,0,.35); }
+  .stock-head { padding: 14px 18px; border-bottom: 0.5px solid var(--line); display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+  .stock-head h3 { margin: 0 6px 0 0; font-family: var(--serif-display); font-size: 17px; }
+  .stock-head input[type=text] { flex: 1 1 260px; padding: 8px 10px; border: 1px solid var(--line); border-radius: 4px; font-family: var(--serif); font-size: 14px; }
+  .stock-head select { flex: 0 0 auto; padding: 8px; border: 1px solid var(--line); border-radius: 4px; font-family: var(--serif); }
+  .stock-keys { padding: 8px 18px; border-bottom: 0.5px solid var(--line-soft); font-size: 12px; color: var(--mute); display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+  .stock-keys input { padding: 4px 8px; border: 1px solid var(--line); border-radius: 3px; font-size: 12px; width: 300px; font-family: monospace; }
+  .stock-keys a { color: var(--accent); }
+  .stock-body { overflow: auto; padding: 14px 18px; flex: 1; }
+  .stock-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 12px; }
+  .stock-item { border: 0.5px solid var(--line); background: #fff; border-radius: 4px; overflow: hidden; cursor: pointer; transition: transform .12s, box-shadow .12s; }
+  .stock-item:hover { transform: translateY(-2px); box-shadow: 0 6px 18px rgba(0,0,0,.15); }
+  .stock-item img { width: 100%; height: 120px; object-fit: cover; display: block; }
+  .stock-item .cred { font-size: 11px; color: var(--mute); padding: 6px 8px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .stock-empty { text-align: center; color: var(--mute); font-style: italic; padding: 50px 0; }
+  .stock-foot { padding: 10px 18px; border-top: 0.5px solid var(--line); display: flex; justify-content: space-between; align-items: center; font-size: 12px; color: var(--mute); }
+  .stock-foot .btn { margin-left: 8px; }
 </style>
 </head>
 <body>
@@ -331,6 +352,7 @@
       '<div class="photo-picker"><div class="photo-preview" id="f-photo-preview">' + photoPrev + '</div>' +
       '<div class="photo-buttons">' +
       '<label class="btn small" for="f-photo-file">📷 사진 선택</label>' +
+      '<button type="button" class="btn small" onclick="openStockSearch(\'f-photo\',\'f-photo-preview\',\'f-photoCaption\')">🔍 무료 사진 검색</button>' +
       '<input id="f-photo-file" type="file" accept="image/*" style="display:none" data-target-hidden="f-photo" data-target-preview="f-photo-preview">' +
       '<button class="btn small" data-clear-hidden="f-photo" data-clear-preview="f-photo-preview">✕ 제거</button></div>' +
       '<input type="hidden" id="f-photo" value="' + escAttr(a.photo || '') + '"></div></div>' +
@@ -430,6 +452,7 @@
       '<div class="row"><div class="field"><label>칼럼 사진 (본문 위 큰 사진)</label>' +
       '<div class="photo-picker"><div class="photo-preview" id="c-photo-preview">' + colPhotoPrev + '</div>' +
       '<div class="photo-buttons"><label class="btn small" for="c-photo-file">📷 사진 선택</label>' +
+      '<button type="button" class="btn small" onclick="openStockSearch(\'c-photo\',\'c-photo-preview\',\'c-photoCaption\')">🔍 무료 사진 검색</button>' +
       '<input id="c-photo-file" type="file" accept="image/*" style="display:none" data-target-hidden="c-photo" data-target-preview="c-photo-preview">' +
       '<button class="btn small" data-clear-hidden="c-photo" data-clear-preview="c-photo-preview">✕ 제거</button></div>' +
       '<input type="hidden" id="c-photo" value="' + escAttr(c.photo || '') + '"></div></div>' +
@@ -524,6 +547,178 @@
     updateMeta();
     setStatus('[OK] articles.json 다운로드 완료. 신문 폴더로 옮긴 후 generate_data.py 를 실행하세요.');
   }
+</script>
+
+<!-- ── 무료 사진 검색 모달 ── -->
+<div class="stock-overlay" id="stock-overlay">
+  <div class="stock-modal">
+    <div class="stock-head">
+      <h3>🔍 무료 사진 검색</h3>
+      <select id="stock-source">
+        <option value="pexels">Pexels</option>
+        <option value="pixabay">Pixabay</option>
+      </select>
+      <input type="text" id="stock-q" placeholder="검색어 (영어가 결과가 많아요: nvidia, semiconductor, white house ...)">
+      <button class="btn small primary" onclick="stockSearch()">검색</button>
+      <button class="btn small" onclick="closeStockSearch()">✕ 닫기</button>
+    </div>
+    <div class="stock-keys">
+      <span>API 키</span>
+      <input type="text" id="stock-key" placeholder="무료 키 붙여넣기 (한 번만, 이 컴퓨터에 저장됨)">
+      <button class="btn small" onclick="saveStockKey()">저장</button>
+      <span id="stock-key-help"></span>
+    </div>
+    <div class="stock-body"><div class="stock-grid" id="stock-grid"><p class="stock-empty">검색어를 입력하고 검색을 누르세요.</p></div></div>
+    <div class="stock-foot">
+      <span id="stock-status">Pexels·Pixabay 사진은 상업용 무료, 출처 표기 권장. 사진을 누르면 기사에 바로 들어갑니다.</span>
+      <span><button class="btn small" id="stock-prev" onclick="stockPage(-1)">◀ 이전</button><button class="btn small" id="stock-next" onclick="stockPage(1)">다음 ▶</button></span>
+    </div>
+  </div>
+</div>
+
+<script>
+// ============================================================
+// 무료 사진 검색 (Pexels / Pixabay) → 기사 사진으로 바로 삽입
+// ============================================================
+(function(){
+  var TARGET = null;          // {hidden, preview, caption}
+  var PAGE = 1, LAST_Q = '';
+  var HELP = {
+    pexels:  '키 발급: <a href="https://www.pexels.com/api/" target="_blank">pexels.com/api</a> (가입 → Your API Key)',
+    pixabay: '키 발급: <a href="https://pixabay.com/api/docs/" target="_blank">pixabay.com/api/docs</a> (로그인하면 페이지에 키가 보임)'
+  };
+  function src() { return document.getElementById('stock-source').value; }
+  function keyName() { return 'stockkey_' + src(); }
+  function loadKey() {
+    try { document.getElementById('stock-key').value = localStorage.getItem(keyName()) || ''; } catch(e) {}
+    document.getElementById('stock-key-help').innerHTML = HELP[src()];
+  }
+  window.saveStockKey = function() {
+    var k = document.getElementById('stock-key').value.trim();
+    try { localStorage.setItem(keyName(), k); } catch(e) {}
+    setStatus('[OK] ' + src() + ' API 키 저장됨.');
+  };
+  window.openStockSearch = function(hidden, preview, caption) {
+    TARGET = {hidden: hidden, preview: preview, caption: caption};
+    document.getElementById('stock-overlay').classList.add('open');
+    loadKey();
+    // 헤드라인을 검색어 기본값으로
+    var h = document.getElementById('f-headline') || document.getElementById('c-headline');
+    var q = document.getElementById('stock-q');
+    if (h && h.value && !q.value) q.value = '';
+    setTimeout(function(){ q.focus(); }, 50);
+  };
+  window.closeStockSearch = function() {
+    document.getElementById('stock-overlay').classList.remove('open');
+  };
+  document.getElementById('stock-overlay').addEventListener('click', function(e){
+    if (e.target === this) closeStockSearch();
+  });
+  document.getElementById('stock-q').addEventListener('keydown', function(e){
+    if (e.key === 'Enter') { PAGE = 1; stockSearch(); }
+  });
+  document.getElementById('stock-source').addEventListener('change', function(){
+    loadKey(); PAGE = 1;
+    if (LAST_Q) stockSearch();
+  });
+  window.stockPage = function(d) {
+    PAGE = Math.max(1, PAGE + d);
+    stockSearch();
+  };
+
+  function grid(html) { document.getElementById('stock-grid').innerHTML = html; }
+  function status(t) { document.getElementById('stock-status').textContent = t; }
+
+  window.stockSearch = function() {
+    var q = document.getElementById('stock-q').value.trim();
+    if (!q) { grid('<p class="stock-empty">검색어를 입력하세요.</p>'); return; }
+    if (q !== LAST_Q) PAGE = 1;
+    LAST_Q = q;
+    var key = (document.getElementById('stock-key').value || '').trim();
+    if (!key) { grid('<p class="stock-empty">위의 API 키 칸에 무료 키를 넣고 저장하세요.<br>' + HELP[src()] + '</p>'); return; }
+    grid('<p class="stock-empty">검색 중...</p>');
+    status('검색 중...');
+
+    var url, opts = {};
+    if (src() === 'pexels') {
+      url = 'https://api.pexels.com/v1/search?per_page=24&page=' + PAGE + '&query=' + encodeURIComponent(q);
+      opts.headers = { Authorization: key };
+    } else {
+      url = 'https://pixabay.com/api/?key=' + encodeURIComponent(key) + '&per_page=24&page=' + PAGE
+          + '&image_type=photo&safesearch=true&q=' + encodeURIComponent(q);
+    }
+    fetch(url, opts).then(function(r){
+      if (!r.ok) throw new Error('HTTP ' + r.status + (r.status === 401 || r.status === 400 ? ' — API 키가 틀렸거나 없음' : ''));
+      return r.json();
+    }).then(function(j){
+      var items = [];
+      if (src() === 'pexels') {
+        (j.photos || []).forEach(function(p){
+          items.push({ thumb: p.src.medium, full: p.src.large2x || p.src.large, credit: p.photographer, page: p.url, w: p.width, h: p.height });
+        });
+      } else {
+        (j.hits || []).forEach(function(p){
+          items.push({ thumb: p.webformatURL, full: p.largeImageURL || p.webformatURL, credit: p.user, page: p.pageURL, w: p.imageWidth, h: p.imageHeight });
+        });
+      }
+      if (!items.length) { grid('<p class="stock-empty">결과가 없어요. 영어 검색어로 바꿔 보세요.</p>'); status(''); return; }
+      grid(items.map(function(it, i){
+        return '<div class="stock-item" data-i="' + i + '">'
+          + '<img src="' + it.thumb + '" alt="' + escAttr(it.credit) + '" loading="lazy">'
+          + '<div class="cred">📷 ' + escText(it.credit) + ' · ' + it.w + '×' + it.h + '</div></div>';
+      }).join(''));
+      document.querySelectorAll('.stock-item').forEach(function(el){
+        el.addEventListener('click', function(){ useStock(items[+el.dataset.i]); });
+      });
+      status(src() + ' · ' + PAGE + '페이지 · ' + items.length + '장. 사진을 누르면 기사에 들어갑니다.');
+    }).catch(function(e){
+      grid('<p class="stock-empty">검색 실패: ' + escText(e.message) + '</p>');
+      status('');
+    });
+  };
+
+  // 선택한 사진 → 1200px로 줄여 Base64로 기사에 삽입 (기존 pickPhoto 와 같은 방식)
+  function useStock(it) {
+    status('사진 가져오는 중...');
+    fetch(it.full, { mode: 'cors' }).then(function(r){
+      if (!r.ok) throw new Error('HTTP ' + r.status);
+      return r.blob();
+    }).then(function(blob){
+      var reader = new FileReader();
+      reader.onload = function(e){ shrinkAndSet(e.target.result, it); };
+      reader.readAsDataURL(blob);
+    }).catch(function(){
+      // CORS 로 못 받으면 주소를 그대로 사용 (generate_data.py 가 http 주소도 처리함)
+      setPhoto(it.full, it);
+      setStatus('[!] 사진을 내려받지 못해 원본 주소로 연결했어요. 가능하면 저장해서 "사진 선택"으로 다시 넣는 게 안전해요.');
+    });
+  }
+  function shrinkAndSet(dataUrl, it) {
+    var img = new Image();
+    img.onload = function(){
+      var MAX = 1200, w = img.width, h = img.height;
+      if (w > MAX || h > MAX) { if (w > h) { h = Math.round(h * MAX / w); w = MAX; } else { w = Math.round(w * MAX / h); h = MAX; } }
+      var c = document.createElement('canvas'); c.width = w; c.height = h;
+      c.getContext('2d').drawImage(img, 0, 0, w, h);
+      setPhoto(c.toDataURL('image/jpeg', 0.85), it);
+    };
+    img.onerror = function(){ setPhoto(dataUrl, it); };
+    img.src = dataUrl;
+  }
+  function setPhoto(value, it) {
+    if (!TARGET) return;
+    document.getElementById(TARGET.hidden).value = value;
+    var prev = document.getElementById(TARGET.preview);
+    prev.innerHTML = '';
+    var im = document.createElement('img'); im.src = value; prev.appendChild(im);
+    // 캡션이 비어 있으면 출처를 넣어 둔다 (SEO 키워드는 박창원이 앞에 덧붙이면 됨)
+    var cap = document.getElementById(TARGET.caption);
+    var credit = '사진=' + it.credit + '/' + (src() === 'pexels' ? 'Pexels' : 'Pixabay');
+    if (cap && !cap.value.trim()) cap.value = credit;
+    closeStockSearch();
+    setStatus('[OK] 무료 사진 등록됨 (' + credit + '). 캡션 앞에 키워드를 덧붙이고 적용 → 전체 저장하세요.');
+  }
+})();
 </script>
 
 </body>
